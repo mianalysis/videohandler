@@ -23,4 +23,17 @@
 hs_err_pid*
 
 .idea/
-target/
+
+/target/
+
+linux32/target/
+
+linux64/target/
+
+core/target/
+
+mac64/target/
+
+win32/target/
+
+win64/target/
