@@ -1,36 +1,33 @@
 package wbif.sjx.VideoHandler;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.measure.Calibration;
-import ij.plugin.ChannelSplitter;
-import ij.process.ImageProcessor;
 import org.apache.commons.io.FilenameUtils;
+
+import ij.ImagePlus;
+import ij.measure.Calibration;
 import wbif.sjx.MIA.MIA;
-import wbif.sjx.MIA.Module.ImageProcessing.Stack.ConvertStackToTimeseries;
-import wbif.sjx.MIA.Module.InputOutput.ImageLoader;
 import wbif.sjx.MIA.Module.Module;
 import wbif.sjx.MIA.Module.ModuleCollection;
 import wbif.sjx.MIA.Module.PackageNames;
+import wbif.sjx.MIA.Module.InputOutput.ImageLoader;
 import wbif.sjx.MIA.Object.Image;
-import wbif.sjx.MIA.Object.Parameters.*;
+import wbif.sjx.MIA.Object.Units;
+import wbif.sjx.MIA.Object.Workspace;
+import wbif.sjx.MIA.Object.Parameters.BooleanP;
+import wbif.sjx.MIA.Object.Parameters.ChoiceP;
+import wbif.sjx.MIA.Object.Parameters.DoubleP;
+import wbif.sjx.MIA.Object.Parameters.FilePathP;
+import wbif.sjx.MIA.Object.Parameters.InputImageP;
+import wbif.sjx.MIA.Object.Parameters.IntegerP;
+import wbif.sjx.MIA.Object.Parameters.OutputImageP;
+import wbif.sjx.MIA.Object.Parameters.ParamSeparatorP;
+import wbif.sjx.MIA.Object.Parameters.ParameterCollection;
+import wbif.sjx.MIA.Object.Parameters.StringP;
+import wbif.sjx.MIA.Object.Parameters.TextAreaP;
 import wbif.sjx.MIA.Object.References.ImageMeasurementRefCollection;
 import wbif.sjx.MIA.Object.References.MetadataRefCollection;
 import wbif.sjx.MIA.Object.References.ObjMeasurementRefCollection;
 import wbif.sjx.MIA.Object.References.RelationshipRefCollection;
-import wbif.sjx.MIA.Object.Units;
-import wbif.sjx.MIA.Object.Workspace;
-import wbif.sjx.MIA.Process.CommaSeparatedStringInterpreter;
 import wbif.sjx.common.Object.Metadata;
-
-import javax.annotation.Nullable;
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import static wbif.sjx.MIA.Module.ImageProcessing.Stack.ExtractSubstack.extendRangeToEnd;
 
 public class VideoLoader extends Module {
     public static final String LOADER_SEPARATOR = "Core video loading controls";
@@ -103,14 +100,12 @@ public class VideoLoader extends Module {
     public String getGenericName(Metadata metadata, String genericFormat) {
         String absolutePath = metadata.getFile().getAbsolutePath();
         String path = FilenameUtils.getFullPath(absolutePath);
-        String name = FilenameUtils.removeExtension(FilenameUtils.getName(absolutePath));
-        String comment = metadata.getComment();
         String filename = ImageLoader.compileGenericFilename(genericFormat, metadata);
         return path + filename;
 
     }
 
-    public String getPrefixName(Metadata metadata, int seriesNumber, boolean includeSeries, String ext) {
+    public String getPrefixName(Metadata metadata, boolean includeSeries, String ext) {
         String absolutePath = metadata.getFile().getAbsolutePath();
         String path = FilenameUtils.getFullPath(absolutePath);
         String name = FilenameUtils.removeExtension(FilenameUtils.getName(absolutePath));
@@ -121,7 +116,7 @@ public class VideoLoader extends Module {
 
     }
 
-    public String getSuffixName(Metadata metadata, int seriesNumber, boolean includeSeries, String ext ) {
+    public String getSuffixName(Metadata metadata, boolean includeSeries, String ext ) {
         String absolutePath = metadata.getFile().getAbsolutePath();
         String path = FilenameUtils.getFullPath(absolutePath);
         String name = FilenameUtils.removeExtension(FilenameUtils.getName(absolutePath));
@@ -168,9 +163,6 @@ public class VideoLoader extends Module {
         double xyCal = parameters.getValue(XY_CAL);
         double zCal = parameters.getValue(Z_CAL);
 
-        // Series number comes from the Workspace
-        int seriesNumber = workspace.getMetadata().getSeriesNumber();
-
         int[] crop = null;
         switch (cropMode) {
             case CropModes.FIXED:
@@ -199,13 +191,13 @@ public class VideoLoader extends Module {
                     case NameFormats.INPUT_FILE_PREFIX:
                         metadata = (Metadata) workspace.getMetadata().clone();
                         metadata.setComment(prefix);
-                        pathName = getPrefixName(metadata, seriesNumber,  includeSeriesNumber,ext);
+                        pathName = getPrefixName(metadata,  includeSeriesNumber,ext);
                         break;
 
                     case NameFormats.INPUT_FILE_SUFFIX:
                         metadata = (Metadata) workspace.getMetadata().clone();
                         metadata.setComment(suffix);
-                        pathName = getSuffixName(metadata, seriesNumber, includeSeriesNumber,ext);
+                        pathName = getSuffixName(metadata, includeSeriesNumber,ext);
                         break;
                 }
                 break;
@@ -217,7 +209,6 @@ public class VideoLoader extends Module {
 
         if (pathName == null) return false;
 
-        String extension = FilenameUtils.getExtension(pathName);
         Image outputImage = null;
         try {
             // First first, testing new loader
@@ -244,9 +235,6 @@ public class VideoLoader extends Module {
             outputImage.getImagePlus().updateChannelAndDraw();
 
         }
-
-        // Converting RGB to 3-channel
-        ImagePlus outputImagePlus = outputImage.getImagePlus();
 
         // Adding image to workspace
         writeMessage("Adding image (" + outputImageName + ") to workspace");
@@ -352,7 +340,7 @@ public class VideoLoader extends Module {
 
         returnedParameters.add(parameters.getParameter(CALIBRATION_SEPARATOR));
         returnedParameters.add(parameters.getParameter(SET_CAL));
-        if (parameters.getValue(SET_CAL)) {
+        if ((boolean) parameters.getValue(SET_CAL)) {
             returnedParameters.add(parameters.getParameter(XY_CAL));
             returnedParameters.add(parameters.getParameter(Z_CAL));
         }
