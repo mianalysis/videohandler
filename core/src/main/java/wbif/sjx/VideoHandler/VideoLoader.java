@@ -1,32 +1,39 @@
 package wbif.sjx.VideoHandler;
 
+import java.io.IOException;
+
 import org.apache.commons.io.FilenameUtils;
 
 import ij.ImagePlus;
 import ij.measure.Calibration;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.formats.FormatException;
 import wbif.sjx.MIA.MIA;
 import wbif.sjx.MIA.Module.Module;
 import wbif.sjx.MIA.Module.ModuleCollection;
 import wbif.sjx.MIA.Module.PackageNames;
 import wbif.sjx.MIA.Module.InputOutput.ImageLoader;
 import wbif.sjx.MIA.Object.Image;
+import wbif.sjx.MIA.Object.Status;
 import wbif.sjx.MIA.Object.Units;
 import wbif.sjx.MIA.Object.Workspace;
 import wbif.sjx.MIA.Object.Parameters.BooleanP;
 import wbif.sjx.MIA.Object.Parameters.ChoiceP;
-import wbif.sjx.MIA.Object.Parameters.DoubleP;
 import wbif.sjx.MIA.Object.Parameters.FilePathP;
 import wbif.sjx.MIA.Object.Parameters.InputImageP;
-import wbif.sjx.MIA.Object.Parameters.IntegerP;
 import wbif.sjx.MIA.Object.Parameters.OutputImageP;
 import wbif.sjx.MIA.Object.Parameters.ParamSeparatorP;
 import wbif.sjx.MIA.Object.Parameters.ParameterCollection;
-import wbif.sjx.MIA.Object.Parameters.StringP;
-import wbif.sjx.MIA.Object.Parameters.TextAreaP;
+import wbif.sjx.MIA.Object.Parameters.Text.DoubleP;
+import wbif.sjx.MIA.Object.Parameters.Text.IntegerP;
+import wbif.sjx.MIA.Object.Parameters.Text.StringP;
+import wbif.sjx.MIA.Object.Parameters.Text.TextAreaP;
 import wbif.sjx.MIA.Object.References.ImageMeasurementRefCollection;
 import wbif.sjx.MIA.Object.References.MetadataRefCollection;
 import wbif.sjx.MIA.Object.References.ObjMeasurementRefCollection;
-import wbif.sjx.MIA.Object.References.RelationshipRefCollection;
+import wbif.sjx.MIA.Object.References.ParentChildRefCollection;
+import wbif.sjx.MIA.Object.References.PartnerRefCollection;
 import wbif.sjx.common.Object.Metadata;
 
 public class VideoLoader extends Module {
@@ -57,9 +64,8 @@ public class VideoLoader extends Module {
     public static final String XY_CAL = "XY calibration (dist/px)";
     public static final String Z_CAL = "Z calibration (dist/px)";
 
-
     public VideoLoader(ModuleCollection modules) {
-        super("Load video",modules);
+        super("Load video", modules);
     }
 
     public interface ImportModes {
@@ -67,7 +73,7 @@ public class VideoLoader extends Module {
         String MATCHING_FORMAT = "Matching format";
         String SPECIFIC_FILE = "Specific file";
 
-        String[] ALL = new String[]{CURRENT_FILE, MATCHING_FORMAT, SPECIFIC_FILE};
+        String[] ALL = new String[] { CURRENT_FILE, MATCHING_FORMAT, SPECIFIC_FILE };
 
     }
 
@@ -76,7 +82,7 @@ public class VideoLoader extends Module {
         String INPUT_FILE_PREFIX = "Input filename with prefix";
         String INPUT_FILE_SUFFIX = "Input filename with suffix";
 
-        String[] ALL = new String[]{GENERIC,INPUT_FILE_PREFIX,INPUT_FILE_SUFFIX};
+        String[] ALL = new String[] { GENERIC, INPUT_FILE_PREFIX, INPUT_FILE_SUFFIX };
 
     }
 
@@ -85,7 +91,7 @@ public class VideoLoader extends Module {
         String FIXED = "Fixed";
         String FROM_REFERENCE = "From reference";
 
-        String[] ALL = new String[]{NONE, FIXED, FROM_REFERENCE};
+        String[] ALL = new String[] { NONE, FIXED, FROM_REFERENCE };
 
     }
 
@@ -100,9 +106,14 @@ public class VideoLoader extends Module {
     public String getGenericName(Metadata metadata, String genericFormat) {
         String absolutePath = metadata.getFile().getAbsolutePath();
         String path = FilenameUtils.getFullPath(absolutePath);
-        String filename = ImageLoader.compileGenericFilename(genericFormat, metadata);
-        return path + filename;
-
+        String filename;
+        try {
+            filename = ImageLoader.getGenericName(metadata, genericFormat);
+            return path + filename;
+        } catch (ServiceException | DependencyException | FormatException | IOException e) {
+            MIA.log.writeWarning("Can't determine filename format");
+            return null;
+        }
     }
 
     public String getPrefixName(Metadata metadata, boolean includeSeries, String ext) {
@@ -110,23 +121,22 @@ public class VideoLoader extends Module {
         String path = FilenameUtils.getFullPath(absolutePath);
         String name = FilenameUtils.removeExtension(FilenameUtils.getName(absolutePath));
         String comment = metadata.getComment();
-        String series = includeSeries ? "_S"+metadata.getSeriesNumber() : "";
+        String series = includeSeries ? "_S" + metadata.getSeriesNumber() : "";
 
-        return path+comment+name+series+"."+ext;
+        return path + comment + name + series + "." + ext;
 
     }
 
-    public String getSuffixName(Metadata metadata, boolean includeSeries, String ext ) {
+    public String getSuffixName(Metadata metadata, boolean includeSeries, String ext) {
         String absolutePath = metadata.getFile().getAbsolutePath();
         String path = FilenameUtils.getFullPath(absolutePath);
         String name = FilenameUtils.removeExtension(FilenameUtils.getName(absolutePath));
         String comment = metadata.getComment();
-        String series = includeSeries ? "_S"+metadata.getSeriesNumber() : "";
+        String series = includeSeries ? "_S" + metadata.getSeriesNumber() : "";
 
-        return path+name+series+comment+"."+ext;
+        return path + name + series + comment + "." + ext;
 
     }
-
 
     @Override
     public String getPackageName() {
@@ -139,7 +149,7 @@ public class VideoLoader extends Module {
     }
 
     @Override
-    public boolean process(Workspace workspace) {
+    public Status process(Workspace workspace) {
         // Getting parameters
         String outputImageName = parameters.getValue(OUTPUT_IMAGE);
         String importMode = parameters.getValue(IMPORT_MODE);
@@ -166,7 +176,7 @@ public class VideoLoader extends Module {
         int[] crop = null;
         switch (cropMode) {
             case CropModes.FIXED:
-                crop = new int[]{left, top, width, height};
+                crop = new int[] { left, top, width, height };
                 break;
             case CropModes.FROM_REFERENCE:
                 // Displaying the image
@@ -191,13 +201,13 @@ public class VideoLoader extends Module {
                     case NameFormats.INPUT_FILE_PREFIX:
                         metadata = (Metadata) workspace.getMetadata().clone();
                         metadata.setComment(prefix);
-                        pathName = getPrefixName(metadata,  includeSeriesNumber,ext);
+                        pathName = getPrefixName(metadata, includeSeriesNumber, ext);
                         break;
 
                     case NameFormats.INPUT_FILE_SUFFIX:
                         metadata = (Metadata) workspace.getMetadata().clone();
                         metadata.setComment(suffix);
-                        pathName = getSuffixName(metadata, includeSeriesNumber,ext);
+                        pathName = getSuffixName(metadata, includeSeriesNumber, ext);
                         break;
                 }
                 break;
@@ -207,23 +217,24 @@ public class VideoLoader extends Module {
                 break;
         }
 
-        if (pathName == null) return false;
+        if (pathName == null)
+            return Status.FAIL;
 
         Image outputImage = null;
         try {
             // First first, testing new loader
-            ImagePlus outputIpl = VideoLoaderCore.getVideo(pathName,frameRange,channelRange,crop);
-            outputImage = new Image(outputImageName,outputIpl);
+            ImagePlus outputIpl = VideoLoaderCore.getVideo(pathName, frameRange, channelRange, crop);
+            outputImage = new Image(outputImageName, outputIpl);
 
         } catch (Exception e) {
             e.printStackTrace(System.err);
             MIA.log.writeError("Unable to read video.  Skipping this file.");
-            return false;
+            return Status.FAIL;
         }
 
         // If necessary, setting the spatial calibration
         if (setCalibration) {
-            writeMessage("Setting spatial calibration (XY = "+xyCal+", Z = "+zCal+")");
+            writeMessage("Setting spatial calibration (XY = " + xyCal + ", Z = " + zCal + ")");
             Calibration calibration = new Calibration();
 
             calibration.pixelHeight = xyCal;
@@ -240,41 +251,46 @@ public class VideoLoader extends Module {
         writeMessage("Adding image (" + outputImageName + ") to workspace");
         workspace.addImage(outputImage);
 
-        if (showOutput) outputImage.showImage(outputImageName,null,false,true);
+        if (showOutput)
+            outputImage.showImage(outputImageName, null, false, true);
 
-        return true;
+        return Status.PASS;
 
     }
 
     @Override
     protected void initialiseParameters() {
-        parameters.add(new ParamSeparatorP(LOADER_SEPARATOR,this));
+        parameters.add(new ParamSeparatorP(LOADER_SEPARATOR, this));
         parameters.add(new OutputImageP(OUTPUT_IMAGE, this));
         parameters.add(new ChoiceP(IMPORT_MODE, this, ImportModes.CURRENT_FILE, ImportModes.ALL));
-        parameters.add(new ChoiceP(NAME_FORMAT,this, NameFormats.GENERIC, NameFormats.ALL));
+        parameters.add(new ChoiceP(NAME_FORMAT, this, NameFormats.GENERIC, NameFormats.ALL));
 
-        parameters.add(new StringP(GENERIC_FORMAT,this));
-        parameters.add(new TextAreaP(AVAILABLE_METADATA_FIELDS,this,false));
-        parameters.add(new StringP(PREFIX,this));
-        parameters.add(new StringP(SUFFIX,this));
-        parameters.add(new StringP(EXTENSION,this));
-        parameters.add(new BooleanP(INCLUDE_SERIES_NUMBER,this,true));
+        parameters.add(new StringP(GENERIC_FORMAT, this));
+        parameters.add(new TextAreaP(AVAILABLE_METADATA_FIELDS, this, false));
+        parameters.add(new StringP(PREFIX, this));
+        parameters.add(new StringP(SUFFIX, this));
+        parameters.add(new StringP(EXTENSION, this));
+        parameters.add(new BooleanP(INCLUDE_SERIES_NUMBER, this, true));
         parameters.add(new FilePathP(FILE_PATH, this));
 
-        parameters.add(new ParamSeparatorP(RANGE_SEPARATOR,this));
-        parameters.add(new StringP(CHANNELS,this,"1-end"));
-        parameters.add(new StringP(FRAMES,this,"1-end"));
-        parameters.add(new ChoiceP(CROP_MODE, this, CropModes.NONE, CropModes.ALL,"Choice of loading the entire frame, or cropping in XY.<br>" +
-                "<br>- \""+ CropModes.NONE+"\" (default) will load the entire frame in XY.<br>" +
-                "<br>- \""+ CropModes.FIXED+"\" will apply a pre-defined crop to the input frame based on the parameters \"Left\", \"Top\",\"Width\" and \"Height\".<br>" +
-                "<br>- \""+ CropModes.FROM_REFERENCE+"\" will display a specified image and ask the user to select a region to crop the input frame to."));
-        parameters.add(new InputImageP(REFERENCE_IMAGE, this, "", "The frame to be displayed for selection of the cropping region if the cropping mode is set to \""+ CropModes.FROM_REFERENCE+"\"."));
-        parameters.add(new IntegerP(LEFT, this,0));
-        parameters.add(new IntegerP(TOP, this,0));
-        parameters.add(new IntegerP(WIDTH, this,512));
-        parameters.add(new IntegerP(HEIGHT, this,512));
+        parameters.add(new ParamSeparatorP(RANGE_SEPARATOR, this));
+        parameters.add(new StringP(CHANNELS, this, "1-end"));
+        parameters.add(new StringP(FRAMES, this, "1-end"));
+        parameters.add(new ChoiceP(CROP_MODE, this, CropModes.NONE, CropModes.ALL,
+                "Choice of loading the entire frame, or cropping in XY.<br>" + "<br>- \"" + CropModes.NONE
+                        + "\" (default) will load the entire frame in XY.<br>" + "<br>- \"" + CropModes.FIXED
+                        + "\" will apply a pre-defined crop to the input frame based on the parameters \"Left\", \"Top\",\"Width\" and \"Height\".<br>"
+                        + "<br>- \"" + CropModes.FROM_REFERENCE
+                        + "\" will display a specified image and ask the user to select a region to crop the input frame to."));
+        parameters.add(new InputImageP(REFERENCE_IMAGE, this, "",
+                "The frame to be displayed for selection of the cropping region if the cropping mode is set to \""
+                        + CropModes.FROM_REFERENCE + "\"."));
+        parameters.add(new IntegerP(LEFT, this, 0));
+        parameters.add(new IntegerP(TOP, this, 0));
+        parameters.add(new IntegerP(WIDTH, this, 512));
+        parameters.add(new IntegerP(HEIGHT, this, 512));
 
-        parameters.add(new ParamSeparatorP(CALIBRATION_SEPARATOR,this));
+        parameters.add(new ParamSeparatorP(CALIBRATION_SEPARATOR, this));
         parameters.add(new BooleanP(SET_CAL, this, false));
         parameters.add(new DoubleP(XY_CAL, this, 1.0));
         parameters.add(new DoubleP(Z_CAL, this, 1.0));
@@ -289,7 +305,7 @@ public class VideoLoader extends Module {
         returnedParameters.add(parameters.getParameter(OUTPUT_IMAGE));
 
         returnedParameters.add(parameters.getParameter(IMPORT_MODE));
-        switch((String) parameters.getValue(IMPORT_MODE)) {
+        switch ((String) parameters.getValue(IMPORT_MODE)) {
             case ImageLoader.ImportModes.CURRENT_FILE:
             case ImageLoader.ImportModes.IMAGEJ:
                 break;
@@ -301,7 +317,8 @@ public class VideoLoader extends Module {
                         returnedParameters.add(parameters.getParameter(GENERIC_FORMAT));
                         returnedParameters.add(parameters.getParameter(AVAILABLE_METADATA_FIELDS));
                         MetadataRefCollection metadataRefs = modules.getMetadataRefs(this);
-                        parameters.getParameter(AVAILABLE_METADATA_FIELDS).setValue(ImageLoader.getMetadataValues(metadataRefs));
+                        parameters.getParameter(AVAILABLE_METADATA_FIELDS)
+                                .setValue(ImageLoader.getMetadataValues(metadataRefs));
                         break;
                     case NameFormats.INPUT_FILE_PREFIX:
                         returnedParameters.add(parameters.getParameter(PREFIX));
@@ -378,12 +395,17 @@ public class VideoLoader extends Module {
     }
 
     @Override
-    public RelationshipRefCollection updateAndGetRelationships() {
+    public boolean verify() {
+        return true;
+    }
+
+    @Override
+    public ParentChildRefCollection updateAndGetParentChildRefs() {
         return null;
     }
 
     @Override
-    public boolean verify() {
-        return true;
+    public PartnerRefCollection updateAndGetPartnerRefs() {
+        return null;
     }
 }
