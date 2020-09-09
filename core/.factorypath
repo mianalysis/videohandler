@@ -13,7 +13,7 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/bytedeco/javacpp/1.4.4/javacpp-1.4.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/bytedeco/javacpp-presets/opencv/4.0.1-1.4.4/opencv-4.0.1-1.4.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/bytedeco/javacpp-presets/ffmpeg/4.1-1.4.4/ffmpeg-4.1-1.4.4.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/github/SJCross/ModularImageAnalysis/v0.14.4/ModularImageAnalysis-v0.14.4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/github/SJCross/ModularImageAnalysis/v0.14.7/ModularImageAnalysis-v0.14.7.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/maven/plugins/maven-project-info-reports-plugin/2.9/maven-project-info-reports-plugin-2.9.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/maven/reporting/maven-reporting-impl/2.3/maven-reporting-impl-2.3.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/maven/shared/maven-shared-utils/0.6/maven-shared-utils-0.6.jar" enabled="true" runInBatchMode="false"/>
@@ -284,7 +284,7 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/io/github/classgraph/classgraph/4.8.54/classgraph-4.8.54.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/atlassian/commonmark/commonmark/0.12.1/commonmark-0.12.1.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/github/SJCross/Common/1.6.7/Common-1.6.7.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/github/SJCross/Common/1.6.10/Common-1.6.10.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/ome/bio-formats_plugins/6.1.1/bio-formats_plugins-6.1.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/openmicroscopy/ome-common/6.0.3/ome-common-6.0.3.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/io/minio/minio/5.0.2/minio-5.0.2.jar" enabled="true" runInBatchMode="false"/>
