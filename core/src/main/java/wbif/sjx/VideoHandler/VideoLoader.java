@@ -234,7 +234,7 @@ public class VideoLoader extends Module {
 
         // If necessary, setting the spatial calibration
         if (setCalibration) {
-            writeMessage("Setting spatial calibration (XY = " + xyCal + ", Z = " + zCal + ")");
+            writeStatus("Setting spatial calibration (XY = " + xyCal + ", Z = " + zCal + ")");
             Calibration calibration = new Calibration();
 
             calibration.pixelHeight = xyCal;
@@ -248,7 +248,7 @@ public class VideoLoader extends Module {
         }
 
         // Adding image to workspace
-        writeMessage("Adding image (" + outputImageName + ") to workspace");
+        writeStatus("Adding image (" + outputImageName + ") to workspace");
         workspace.addImage(outputImage);
 
         if (showOutput)
