@@ -1,11 +1,10 @@
 package wbif.sjx.VideoHandler;
 
-import ij.ImagePlus;
+import java.io.File;
+
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
-
-import java.io.File;
 
 public class Video_Loader implements PlugIn {
     @Override

@@ -88,6 +88,9 @@ public class VideoLoaderCore {
             ipl.getCalibration().pixelDepth = 1;
         }
 
+        // Closing the loader
+        loader.close();
+
         return ipl;
 
     }
@@ -104,7 +107,7 @@ public class VideoLoaderCore {
     }
 
     public static int[] extendRangeToEnd(int[] inputRange, int end) {
-        TreeSet<Integer> values = new TreeSet();
+        TreeSet<Integer> values = new TreeSet<>();
 
         int start;
         for(start = 0; start < inputRange.length - 3; ++start) {
