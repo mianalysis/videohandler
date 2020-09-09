@@ -318,7 +318,7 @@ public class VideoLoader extends Module {
                         returnedParameters.add(parameters.getParameter(AVAILABLE_METADATA_FIELDS));
                         MetadataRefCollection metadataRefs = modules.getMetadataRefs(this);
                         parameters.getParameter(AVAILABLE_METADATA_FIELDS)
-                                .setValue(ImageLoader.getMetadataValues(metadataRefs));
+                                .setValue(metadataRefs.getMetadataValues());
                         break;
                     case NameFormats.INPUT_FILE_PREFIX:
                         returnedParameters.add(parameters.getParameter(PREFIX));
