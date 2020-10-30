@@ -10,21 +10,18 @@ import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.formats.FormatException;
 import wbif.sjx.MIA.MIA;
+import wbif.sjx.MIA.Module.InputOutput.ImageLoader;
 import wbif.sjx.MIA.Module.Module;
 import wbif.sjx.MIA.Module.ModuleCollection;
 import wbif.sjx.MIA.Module.PackageNames;
-import wbif.sjx.MIA.Module.InputOutput.ImageLoader;
 import wbif.sjx.MIA.Object.Image;
-import wbif.sjx.MIA.Object.Status;
-import wbif.sjx.MIA.Object.Units;
-import wbif.sjx.MIA.Object.Workspace;
 import wbif.sjx.MIA.Object.Parameters.BooleanP;
 import wbif.sjx.MIA.Object.Parameters.ChoiceP;
 import wbif.sjx.MIA.Object.Parameters.FilePathP;
 import wbif.sjx.MIA.Object.Parameters.InputImageP;
 import wbif.sjx.MIA.Object.Parameters.OutputImageP;
-import wbif.sjx.MIA.Object.Parameters.ParamSeparatorP;
 import wbif.sjx.MIA.Object.Parameters.ParameterCollection;
+import wbif.sjx.MIA.Object.Parameters.SeparatorP;
 import wbif.sjx.MIA.Object.Parameters.Text.DoubleP;
 import wbif.sjx.MIA.Object.Parameters.Text.IntegerP;
 import wbif.sjx.MIA.Object.Parameters.Text.StringP;
@@ -34,6 +31,9 @@ import wbif.sjx.MIA.Object.References.Collections.MetadataRefCollection;
 import wbif.sjx.MIA.Object.References.Collections.ObjMeasurementRefCollection;
 import wbif.sjx.MIA.Object.References.Collections.ParentChildRefCollection;
 import wbif.sjx.MIA.Object.References.Collections.PartnerRefCollection;
+import wbif.sjx.MIA.Object.Status;
+import wbif.sjx.MIA.Object.Units;
+import wbif.sjx.MIA.Object.Workspace;
 import wbif.sjx.common.Object.Metadata;
 
 public class VideoLoader extends Module {
@@ -260,7 +260,7 @@ public class VideoLoader extends Module {
 
     @Override
     protected void initialiseParameters() {
-        parameters.add(new ParamSeparatorP(LOADER_SEPARATOR, this));
+        parameters.add(new SeparatorP(LOADER_SEPARATOR, this));
         parameters.add(new OutputImageP(OUTPUT_IMAGE, this));
         parameters.add(new ChoiceP(IMPORT_MODE, this, ImportModes.CURRENT_FILE, ImportModes.ALL));
         parameters.add(new ChoiceP(NAME_FORMAT, this, NameFormats.GENERIC, NameFormats.ALL));
@@ -273,7 +273,7 @@ public class VideoLoader extends Module {
         parameters.add(new BooleanP(INCLUDE_SERIES_NUMBER, this, true));
         parameters.add(new FilePathP(FILE_PATH, this));
 
-        parameters.add(new ParamSeparatorP(RANGE_SEPARATOR, this));
+        parameters.add(new SeparatorP(RANGE_SEPARATOR, this));
         parameters.add(new StringP(CHANNELS, this, "1-end"));
         parameters.add(new StringP(FRAMES, this, "1-end"));
         parameters.add(new ChoiceP(CROP_MODE, this, CropModes.NONE, CropModes.ALL,
@@ -290,7 +290,7 @@ public class VideoLoader extends Module {
         parameters.add(new IntegerP(WIDTH, this, 512));
         parameters.add(new IntegerP(HEIGHT, this, 512));
 
-        parameters.add(new ParamSeparatorP(CALIBRATION_SEPARATOR, this));
+        parameters.add(new SeparatorP(CALIBRATION_SEPARATOR, this));
         parameters.add(new BooleanP(SET_CAL, this, false));
         parameters.add(new DoubleP(XY_CAL, this, 1.0));
         parameters.add(new DoubleP(Z_CAL, this, 1.0));
