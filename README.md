@@ -26,7 +26,7 @@ To load videos into MIA:
 
 Acknowledgements
 ----------------
-This plugin relies on the [JavaCV](https://github.com/bytedeco/javacv) library, which comes bundled with each platform-specific [release](https://github.com/sjcross/VideoHandler).
+This plugin relies on the [JavaCV](https://github.com/bytedeco/javacv) library, which comes bundled with each platform-specific [release](https://github.com/sjcross/VideoHandler/releases).
 
 Note
 ----
