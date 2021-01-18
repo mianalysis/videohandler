@@ -4,7 +4,7 @@ VideoHandler is an [Fiji](https://fiji.sc) plugin, which uses [JavaCV](https://g
 
 Installation
 ------------
-1. Download the latest version of the plugin from the [Releases](https://github.com/sjcross/VideoHandler) page.  VideoHandler is platform-specific, so please only download the .jar file corresponding to your system (e.g. for a 64-bit Windows computer, use the "win64" version)
+1. Download the latest version of the plugin from the [Releases](https://github.com/sjcross/VideoHandler/releases) page.  VideoHandler is platform-specific, so please only download the .jar file corresponding to your system (e.g. for a 64-bit Windows computer, use the "win64" version)
 2. Place this .jar file into the /plugins directory of the your Fiji installation
 
 Usage
