@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4446960.svg)](https://doi.org/10.5281/zenodo.4446960)
+
 About VideoHandler
 ------------------
 VideoHandler is an [Fiji](https://fiji.sc) plugin, which uses [JavaCV](https://github.com/bytedeco/javacv) to provide video loading functionality.  Videos can be loaded both directly to Fiji or into a MIA workflow if the [MIA (Modular Image Analysis)](https://github.com/sjcross/MIA) workflow automation plugin is also installed.
