@@ -89,6 +89,9 @@ public class VideoLoaderCore {
             ipl.getCalibration().pixelDepth = 1;
         }
 
+        ipl.setPosition(1);
+        ipl.updateChannelAndDraw();
+
         // Closing the loader
         loader.close();
 
