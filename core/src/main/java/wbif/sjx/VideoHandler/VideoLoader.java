@@ -11,9 +11,10 @@ import loci.common.services.ServiceException;
 import loci.formats.FormatException;
 import wbif.sjx.MIA.MIA;
 import wbif.sjx.MIA.Module.InputOutput.ImageLoader;
+import wbif.sjx.MIA.Module.Categories;
+import wbif.sjx.MIA.Module.Category;
 import wbif.sjx.MIA.Module.Module;
 import wbif.sjx.MIA.Module.ModuleCollection;
-import wbif.sjx.MIA.Module.PackageNames;
 import wbif.sjx.MIA.Object.Image;
 import wbif.sjx.MIA.Object.Parameters.BooleanP;
 import wbif.sjx.MIA.Object.Parameters.ChoiceP;
@@ -139,8 +140,8 @@ public class VideoLoader extends Module {
     }
 
     @Override
-    public String getPackageName() {
-        return PackageNames.INPUT_OUTPUT;
+    public Category getCategory() {
+        return Categories.INPUT_OUTPUT;
     }
 
     @Override
@@ -317,8 +318,7 @@ public class VideoLoader extends Module {
                         returnedParameters.add(parameters.getParameter(GENERIC_FORMAT));
                         returnedParameters.add(parameters.getParameter(AVAILABLE_METADATA_FIELDS));
                         MetadataRefCollection metadataRefs = modules.getMetadataRefs(this);
-                        parameters.getParameter(AVAILABLE_METADATA_FIELDS)
-                                .setValue(metadataRefs.getMetadataValues());
+                        parameters.getParameter(AVAILABLE_METADATA_FIELDS).setValue(metadataRefs.getMetadataValues());
                         break;
                     case NameFormats.INPUT_FILE_PREFIX:
                         returnedParameters.add(parameters.getParameter(PREFIX));

@@ -7,7 +7,7 @@
     <groupId>wbif.sjx</groupId>
     <artifactId>VideoHandler</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <name>VideoHandler</name>
     <url>https://github.com/SJCross/VideoHandler</url>
     <inceptionYear>2019</inceptionYear>
@@ -15,6 +15,17 @@
     <organization>
         <name>University of Bristol</name>
     </organization>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dependency.locations.selected>false</dependency.locations.selected>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <scp>compile</scp>
+        <genClass>system</genClass>
+        <license.licenseName>GNU General Public License v3+</license.licenseName>
+        <license.copyrightOwners>Stephen Cross</license.copyrightOwners>        
+    </properties>
 
     <licenses>
         <license>
@@ -51,17 +62,6 @@
         <system>GitHub Issues</system>
         <url>https://github.com/SJCross/VideoHandler/issues</url>
     </issueManagement>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dependency.locations.selected>false</dependency.locations.selected>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <scp>compile</scp>
-        <genClass>system</genClass>
-        <license.licenseName>GNU General Public License v3+</license.licenseName>
-        <license.copyrightOwners>Stephen Cross</license.copyrightOwners>
-    </properties>
 
     <mailingLists>
         <mailingList>

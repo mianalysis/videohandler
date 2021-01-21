@@ -4,7 +4,7 @@
     <parent>
         <artifactId>VideoHandler</artifactId>
         <groupId>wbif.sjx</groupId>
-        <version>1.0.7</version>
+        <version>1.0.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.github.SJCross</groupId>
             <artifactId>ModularImageAnalysis</artifactId>
-            <version>0.15.5</version>
+            <version>v0.16.0</version>
             <scope>${scp}</scope>
         </dependency>
     </dependencies>
