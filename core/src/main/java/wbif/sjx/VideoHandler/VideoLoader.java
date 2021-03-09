@@ -10,12 +10,14 @@ import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.formats.FormatException;
 import wbif.sjx.MIA.MIA;
-import wbif.sjx.MIA.Module.InputOutput.ImageLoader;
 import wbif.sjx.MIA.Module.Categories;
 import wbif.sjx.MIA.Module.Category;
 import wbif.sjx.MIA.Module.Module;
 import wbif.sjx.MIA.Module.ModuleCollection;
+import wbif.sjx.MIA.Module.InputOutput.ImageLoader;
 import wbif.sjx.MIA.Object.Image;
+import wbif.sjx.MIA.Object.Status;
+import wbif.sjx.MIA.Object.Workspace;
 import wbif.sjx.MIA.Object.Parameters.BooleanP;
 import wbif.sjx.MIA.Object.Parameters.ChoiceP;
 import wbif.sjx.MIA.Object.Parameters.FilePathP;
@@ -32,9 +34,7 @@ import wbif.sjx.MIA.Object.References.Collections.MetadataRefCollection;
 import wbif.sjx.MIA.Object.References.Collections.ObjMeasurementRefCollection;
 import wbif.sjx.MIA.Object.References.Collections.ParentChildRefCollection;
 import wbif.sjx.MIA.Object.References.Collections.PartnerRefCollection;
-import wbif.sjx.MIA.Object.Status;
-import wbif.sjx.MIA.Object.Units;
-import wbif.sjx.MIA.Object.Workspace;
+import wbif.sjx.MIA.Object.Units.SpatialUnit;
 import wbif.sjx.common.Object.Metadata;
 
 public class VideoLoader extends Module {
@@ -241,7 +241,7 @@ public class VideoLoader extends Module {
             calibration.pixelHeight = xyCal;
             calibration.pixelWidth = xyCal;
             calibration.pixelDepth = zCal;
-            calibration.setUnit(Units.getOMEUnits().getSymbol());
+            calibration.setUnit(SpatialUnit.getOMEUnit().getSymbol());
 
             outputImage.getImagePlus().setCalibration(calibration);
             outputImage.getImagePlus().updateChannelAndDraw();

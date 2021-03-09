@@ -79,6 +79,21 @@ public class VideoLoaderCore {
 
             }
 
+            // for (int channel:channels) {
+            //     int frameIdx = frameIpl.getStackIndex(channel, 1, 1);
+            //     int iplIdx = ipl.getStackIndex(channel, 1, count);
+            //     ImageProcessor frameIpr = frameIpl.getStack().getProcessor(frameIdx);
+                
+
+            //     if (crop != null) {
+            //         frameIpr.setRoi(left,top,width,height);
+            //         frameIpr = frameIpr.crop();
+            //     }
+
+            //     ipl.getStack().setProcessor(frameIpr,iplIdx);
+
+            // }
+
             count++;
 
         }
