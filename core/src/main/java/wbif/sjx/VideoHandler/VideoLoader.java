@@ -65,6 +65,12 @@ public class VideoLoader extends Module {
     public static final String XY_CAL = "XY calibration (dist/px)";
     public static final String Z_CAL = "Z calibration (dist/px)";
 
+    public static void main(String[] args) throws Exception {
+        MIA.addPluginPackageName(VideoLoader.class.getCanonicalName());
+        MIA.main(new String[]{});
+
+    }
+    
     public VideoLoader(ModuleCollection modules) {
         super("Load video", modules);
     }
@@ -227,6 +233,9 @@ public class VideoLoader extends Module {
             ImagePlus outputIpl = VideoLoaderCore.getVideo(pathName, frameRange, channelRange, crop);
             outputImage = new Image(outputImageName, outputIpl);
 
+        } catch (FrameOutOfRangeException e1) {
+            MIA.log.writeWarning(e1.getMessage());
+            return Status.FAIL;
         } catch (Exception e) {
             e.printStackTrace(System.err);
             MIA.log.writeError("Unable to read video.  Skipping this file.");

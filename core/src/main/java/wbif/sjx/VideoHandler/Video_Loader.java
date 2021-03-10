@@ -5,6 +5,7 @@ import java.io.File;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
+import wbif.sjx.MIA.MIA;
 
 public class Video_Loader implements PlugIn {
     @Override
