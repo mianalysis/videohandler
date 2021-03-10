@@ -16,12 +16,14 @@ import wbif.sjx.MIA.Module.Module;
 import wbif.sjx.MIA.Module.ModuleCollection;
 import wbif.sjx.MIA.Module.InputOutput.ImageLoader;
 import wbif.sjx.MIA.Object.Image;
+import wbif.sjx.MIA.Object.ObjCollection;
 import wbif.sjx.MIA.Object.Status;
 import wbif.sjx.MIA.Object.Workspace;
 import wbif.sjx.MIA.Object.Parameters.BooleanP;
 import wbif.sjx.MIA.Object.Parameters.ChoiceP;
 import wbif.sjx.MIA.Object.Parameters.FilePathP;
 import wbif.sjx.MIA.Object.Parameters.InputImageP;
+import wbif.sjx.MIA.Object.Parameters.InputObjectsP;
 import wbif.sjx.MIA.Object.Parameters.OutputImageP;
 import wbif.sjx.MIA.Object.Parameters.ParameterCollection;
 import wbif.sjx.MIA.Object.Parameters.SeparatorP;
@@ -59,6 +61,7 @@ public class VideoLoader extends Module {
     public static final String TOP = "Top coordinate";
     public static final String WIDTH = "Width";
     public static final String HEIGHT = "Height";
+    public static final String OBJECTS_FOR_LIMITS = "Objects for limits";
 
     public static final String CALIBRATION_SEPARATOR = "Spatial calibration";
     public static final String SET_CAL = "Set manual spatial calibration";
@@ -67,10 +70,10 @@ public class VideoLoader extends Module {
 
     public static void main(String[] args) throws Exception {
         MIA.addPluginPackageName(VideoLoader.class.getCanonicalName());
-        MIA.main(new String[]{});
+        MIA.main(new String[] {});
 
     }
-    
+
     public VideoLoader(ModuleCollection modules) {
         super("Load video", modules);
     }
@@ -97,8 +100,9 @@ public class VideoLoader extends Module {
         String NONE = "None";
         String FIXED = "Fixed";
         String FROM_REFERENCE = "From reference";
+        String OBJECT_COLLECTION_LIMITS = "Object collection limits";
 
-        String[] ALL = new String[] { NONE, FIXED, FROM_REFERENCE };
+        String[] ALL = new String[] { NONE, FIXED, FROM_REFERENCE, OBJECT_COLLECTION_LIMITS };
 
     }
 
@@ -176,52 +180,58 @@ public class VideoLoader extends Module {
         int top = parameters.getValue(TOP);
         int width = parameters.getValue(WIDTH);
         int height = parameters.getValue(HEIGHT);
+        String objectsForLimitsName = parameters.getValue(OBJECTS_FOR_LIMITS);
         boolean setCalibration = parameters.getValue(SET_CAL);
         double xyCal = parameters.getValue(XY_CAL);
         double zCal = parameters.getValue(Z_CAL);
 
         int[] crop = null;
         switch (cropMode) {
-            case CropModes.FIXED:
-                crop = new int[] { left, top, width, height };
-                break;
-            case CropModes.FROM_REFERENCE:
-                // Displaying the image
-                Image referenceImage = workspace.getImage(referenceImageName);
-                crop = ImageLoader.getCropROI(referenceImage);
-                break;
+        case CropModes.FIXED:
+            crop = new int[] { left, top, width, height };
+            break;
+        case CropModes.FROM_REFERENCE:
+            // Displaying the image
+            Image referenceImage = workspace.getImage(referenceImageName);
+            crop = ImageLoader.getCropROI(referenceImage);
+            break;
+        case CropModes.OBJECT_COLLECTION_LIMITS:
+            ObjCollection objectsForLimits = workspace.getObjectSet(objectsForLimitsName);
+            int[][] limits = objectsForLimits.getSpatialExtents();
+            crop = new int[] {limits[0][0], limits[1][0], limits[0][1]-limits[0][0], limits[1][1]-limits[1][0]};
+            break;
         }
 
         String pathName = null;
         switch (importMode) {
-            case ImportModes.CURRENT_FILE:
-                pathName = workspace.getMetadata().getFile().getAbsolutePath();
+        case ImportModes.CURRENT_FILE:
+            pathName = workspace.getMetadata().getFile().getAbsolutePath();
+            break;
+
+        case ImportModes.MATCHING_FORMAT:
+            switch (nameFormat) {
+            case NameFormats.GENERIC:
+                Metadata metadata = (Metadata) workspace.getMetadata().clone();
+                metadata.setComment(prefix);
+                pathName = getGenericName(metadata, genericFormat);
+                break;
+            case NameFormats.INPUT_FILE_PREFIX:
+                metadata = (Metadata) workspace.getMetadata().clone();
+                metadata.setComment(prefix);
+                pathName = getPrefixName(metadata, includeSeriesNumber, ext);
                 break;
 
-            case ImportModes.MATCHING_FORMAT:
-                switch (nameFormat) {
-                    case NameFormats.GENERIC:
-                        Metadata metadata = (Metadata) workspace.getMetadata().clone();
-                        metadata.setComment(prefix);
-                        pathName = getGenericName(metadata, genericFormat);
-                        break;
-                    case NameFormats.INPUT_FILE_PREFIX:
-                        metadata = (Metadata) workspace.getMetadata().clone();
-                        metadata.setComment(prefix);
-                        pathName = getPrefixName(metadata, includeSeriesNumber, ext);
-                        break;
-
-                    case NameFormats.INPUT_FILE_SUFFIX:
-                        metadata = (Metadata) workspace.getMetadata().clone();
-                        metadata.setComment(suffix);
-                        pathName = getSuffixName(metadata, includeSeriesNumber, ext);
-                        break;
-                }
+            case NameFormats.INPUT_FILE_SUFFIX:
+                metadata = (Metadata) workspace.getMetadata().clone();
+                metadata.setComment(suffix);
+                pathName = getSuffixName(metadata, includeSeriesNumber, ext);
                 break;
+            }
+            break;
 
-            case ImportModes.SPECIFIC_FILE:
-                pathName = filePath;
-                break;
+        case ImportModes.SPECIFIC_FILE:
+            pathName = filePath;
+            break;
         }
 
         if (pathName == null)
@@ -299,6 +309,7 @@ public class VideoLoader extends Module {
         parameters.add(new IntegerP(TOP, this, 0));
         parameters.add(new IntegerP(WIDTH, this, 512));
         parameters.add(new IntegerP(HEIGHT, this, 512));
+        parameters.add(new InputObjectsP(OBJECTS_FOR_LIMITS, this));
 
         parameters.add(new SeparatorP(CALIBRATION_SEPARATOR, this));
         parameters.add(new BooleanP(SET_CAL, this, false));
@@ -316,35 +327,35 @@ public class VideoLoader extends Module {
 
         returnedParameters.add(parameters.getParameter(IMPORT_MODE));
         switch ((String) parameters.getValue(IMPORT_MODE)) {
-            case ImageLoader.ImportModes.CURRENT_FILE:
-            case ImageLoader.ImportModes.IMAGEJ:
-                break;
+        case ImageLoader.ImportModes.CURRENT_FILE:
+        case ImageLoader.ImportModes.IMAGEJ:
+            break;
 
-            case ImageLoader.ImportModes.MATCHING_FORMAT:
-                returnedParameters.add(parameters.getParameter(NAME_FORMAT));
-                switch ((String) parameters.getValue(NAME_FORMAT)) {
-                    case NameFormats.GENERIC:
-                        returnedParameters.add(parameters.getParameter(GENERIC_FORMAT));
-                        returnedParameters.add(parameters.getParameter(AVAILABLE_METADATA_FIELDS));
-                        MetadataRefCollection metadataRefs = modules.getMetadataRefs(this);
-                        parameters.getParameter(AVAILABLE_METADATA_FIELDS).setValue(metadataRefs.getMetadataValues());
-                        break;
-                    case NameFormats.INPUT_FILE_PREFIX:
-                        returnedParameters.add(parameters.getParameter(PREFIX));
-                        returnedParameters.add(parameters.getParameter(INCLUDE_SERIES_NUMBER));
-                        returnedParameters.add(parameters.getParameter(EXTENSION));
-                        break;
-                    case NameFormats.INPUT_FILE_SUFFIX:
-                        returnedParameters.add(parameters.getParameter(SUFFIX));
-                        returnedParameters.add(parameters.getParameter(INCLUDE_SERIES_NUMBER));
-                        returnedParameters.add(parameters.getParameter(EXTENSION));
-                        break;
-                }
+        case ImageLoader.ImportModes.MATCHING_FORMAT:
+            returnedParameters.add(parameters.getParameter(NAME_FORMAT));
+            switch ((String) parameters.getValue(NAME_FORMAT)) {
+            case NameFormats.GENERIC:
+                returnedParameters.add(parameters.getParameter(GENERIC_FORMAT));
+                returnedParameters.add(parameters.getParameter(AVAILABLE_METADATA_FIELDS));
+                MetadataRefCollection metadataRefs = modules.getMetadataRefs(this);
+                parameters.getParameter(AVAILABLE_METADATA_FIELDS).setValue(metadataRefs.getMetadataValues());
                 break;
+            case NameFormats.INPUT_FILE_PREFIX:
+                returnedParameters.add(parameters.getParameter(PREFIX));
+                returnedParameters.add(parameters.getParameter(INCLUDE_SERIES_NUMBER));
+                returnedParameters.add(parameters.getParameter(EXTENSION));
+                break;
+            case NameFormats.INPUT_FILE_SUFFIX:
+                returnedParameters.add(parameters.getParameter(SUFFIX));
+                returnedParameters.add(parameters.getParameter(INCLUDE_SERIES_NUMBER));
+                returnedParameters.add(parameters.getParameter(EXTENSION));
+                break;
+            }
+            break;
 
-            case ImageLoader.ImportModes.SPECIFIC_FILE:
-                returnedParameters.add(parameters.getParameter(FILE_PATH));
-                break;
+        case ImageLoader.ImportModes.SPECIFIC_FILE:
+            returnedParameters.add(parameters.getParameter(FILE_PATH));
+            break;
         }
 
         returnedParameters.add(parameters.getParameter(RANGE_SEPARATOR));
@@ -353,15 +364,18 @@ public class VideoLoader extends Module {
 
         returnedParameters.add(parameters.getParameter(CROP_MODE));
         switch ((String) parameters.getValue(CROP_MODE)) {
-            case CropModes.FIXED:
-                returnedParameters.add(parameters.getParameter(LEFT));
-                returnedParameters.add(parameters.getParameter(TOP));
-                returnedParameters.add(parameters.getParameter(WIDTH));
-                returnedParameters.add(parameters.getParameter(HEIGHT));
-                break;
-            case CropModes.FROM_REFERENCE:
-                returnedParameters.add(parameters.getParameter(REFERENCE_IMAGE));
-                break;
+        case CropModes.FIXED:
+            returnedParameters.add(parameters.getParameter(LEFT));
+            returnedParameters.add(parameters.getParameter(TOP));
+            returnedParameters.add(parameters.getParameter(WIDTH));
+            returnedParameters.add(parameters.getParameter(HEIGHT));
+            break;
+        case CropModes.FROM_REFERENCE:
+            returnedParameters.add(parameters.getParameter(REFERENCE_IMAGE));
+            break;
+        case CropModes.OBJECT_COLLECTION_LIMITS:
+            returnedParameters.add(parameters.getParameter(OBJECTS_FOR_LIMITS));
+            break;
         }
 
         returnedParameters.add(parameters.getParameter(CALIBRATION_SEPARATOR));
@@ -381,13 +395,13 @@ public class VideoLoader extends Module {
         String outputImageName = parameters.getValue(OUTPUT_IMAGE);
 
         switch ((String) parameters.getValue(CROP_MODE)) {
-            case CropModes.FROM_REFERENCE:
-                returnedRefs.add(imageMeasurementRefs.getOrPut(Measurements.ROI_LEFT).setImageName(outputImageName));
-                returnedRefs.add(imageMeasurementRefs.getOrPut(Measurements.ROI_TOP).setImageName(outputImageName));
-                returnedRefs.add(imageMeasurementRefs.getOrPut(Measurements.ROI_WIDTH).setImageName(outputImageName));
-                returnedRefs.add(imageMeasurementRefs.getOrPut(Measurements.ROI_HEIGHT).setImageName(outputImageName));
+        case CropModes.FROM_REFERENCE:
+            returnedRefs.add(imageMeasurementRefs.getOrPut(Measurements.ROI_LEFT).setImageName(outputImageName));
+            returnedRefs.add(imageMeasurementRefs.getOrPut(Measurements.ROI_TOP).setImageName(outputImageName));
+            returnedRefs.add(imageMeasurementRefs.getOrPut(Measurements.ROI_WIDTH).setImageName(outputImageName));
+            returnedRefs.add(imageMeasurementRefs.getOrPut(Measurements.ROI_HEIGHT).setImageName(outputImageName));
 
-                break;
+            break;
         }
 
         return returnedRefs;
