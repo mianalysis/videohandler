@@ -62,6 +62,9 @@ public class VideoLoader extends Module {
     public static final String WIDTH = "Width";
     public static final String HEIGHT = "Height";
     public static final String OBJECTS_FOR_LIMITS = "Objects for limits";
+    public static final String SCALE_MODE = "Scale mode";
+    public static final String SCALE_FACTOR_X = "X scale factor";
+    public static final String SCALE_FACTOR_Y = "Y scale factor";
 
     public static final String CALIBRATION_SEPARATOR = "Spatial calibration";
     public static final String SET_CAL = "Set manual spatial calibration";
@@ -103,6 +106,16 @@ public class VideoLoader extends Module {
         String OBJECT_COLLECTION_LIMITS = "Object collection limits";
 
         String[] ALL = new String[] { NONE, FIXED, FROM_REFERENCE, OBJECT_COLLECTION_LIMITS };
+
+    }
+
+    public interface ScaleModes {
+        String NONE = "No scaling";
+        String NO_INTERPOLATION = "Scaling (no interpolation)";
+        String BILINEAR = "Scaling (bilinear)";
+        String BICUBIC = "Scaling (bicubic)";
+
+        String[] ALL = new String[] { NONE, NO_INTERPOLATION, BILINEAR, BICUBIC };
 
     }
 
@@ -181,6 +194,9 @@ public class VideoLoader extends Module {
         int width = parameters.getValue(WIDTH);
         int height = parameters.getValue(HEIGHT);
         String objectsForLimitsName = parameters.getValue(OBJECTS_FOR_LIMITS);
+        String scaleMode = parameters.getValue(SCALE_MODE);
+        double scaleFactorX = parameters.getValue(SCALE_FACTOR_X);
+        double scaleFactorY = parameters.getValue(SCALE_FACTOR_Y);
         boolean setCalibration = parameters.getValue(SET_CAL);
         double xyCal = parameters.getValue(XY_CAL);
         double zCal = parameters.getValue(Z_CAL);
@@ -201,6 +217,12 @@ public class VideoLoader extends Module {
             crop = new int[] {limits[0][0], limits[1][0], limits[0][1]-limits[0][0], limits[1][1]-limits[1][0]};
             break;
         }
+
+        if (scaleMode.equals(ScaleModes.NONE)) {
+            scaleFactorX = 1;
+            scaleFactorY = 1;
+        }
+        double[] scaleFactors = new double[] { scaleFactorX, scaleFactorY };
 
         String pathName = null;
         switch (importMode) {
@@ -240,7 +262,7 @@ public class VideoLoader extends Module {
         Image outputImage = null;
         try {
             // First first, testing new loader
-            ImagePlus outputIpl = VideoLoaderCore.getVideo(pathName, frameRange, channelRange, crop);
+            ImagePlus outputIpl = VideoLoaderCore.getVideo(pathName, frameRange, channelRange, crop, scaleFactors, scaleMode);
             outputImage = new Image(outputImageName, outputIpl);
 
         } catch (FrameOutOfRangeException e1) {
@@ -257,8 +279,8 @@ public class VideoLoader extends Module {
             writeStatus("Setting spatial calibration (XY = " + xyCal + ", Z = " + zCal + ")");
             Calibration calibration = new Calibration();
 
-            calibration.pixelHeight = xyCal;
-            calibration.pixelWidth = xyCal;
+            calibration.pixelHeight = xyCal/scaleFactorX;
+            calibration.pixelWidth = xyCal/scaleFactorY;
             calibration.pixelDepth = zCal;
             calibration.setUnit(SpatialUnit.getOMEUnit().getSymbol());
 
@@ -310,6 +332,9 @@ public class VideoLoader extends Module {
         parameters.add(new IntegerP(WIDTH, this, 512));
         parameters.add(new IntegerP(HEIGHT, this, 512));
         parameters.add(new InputObjectsP(OBJECTS_FOR_LIMITS, this));
+        parameters.add(new ChoiceP(SCALE_MODE, this, ScaleModes.NONE, ScaleModes.ALL));
+        parameters.add(new DoubleP(SCALE_FACTOR_X, this, 1));
+        parameters.add(new DoubleP(SCALE_FACTOR_Y, this, 1));
 
         parameters.add(new SeparatorP(CALIBRATION_SEPARATOR, this));
         parameters.add(new BooleanP(SET_CAL, this, false));
@@ -377,6 +402,16 @@ public class VideoLoader extends Module {
             returnedParameters.add(parameters.getParameter(OBJECTS_FOR_LIMITS));
             break;
         }
+
+        returnedParameters.add(parameters.getParameter(SCALE_MODE));
+            switch ((String) parameters.getValue(SCALE_MODE)) {
+            case ScaleModes.NO_INTERPOLATION:
+            case ScaleModes.BILINEAR:
+            case ScaleModes.BICUBIC:
+                returnedParameters.add(parameters.getParameter(SCALE_FACTOR_X));
+                returnedParameters.add(parameters.getParameter(SCALE_FACTOR_Y));
+                break;
+            }
 
         returnedParameters.add(parameters.getParameter(CALIBRATION_SEPARATOR));
         returnedParameters.add(parameters.getParameter(SET_CAL));

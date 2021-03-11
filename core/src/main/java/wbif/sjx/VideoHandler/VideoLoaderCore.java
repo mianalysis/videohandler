@@ -22,11 +22,14 @@ import ij.process.ImageProcessor;
 import ome.units.UNITS;
 import ome.units.quantity.Time;
 import ome.units.unit.Unit;
+import wbif.sjx.MIA.MIA;
 import wbif.sjx.MIA.Object.Units.TemporalUnit;
 import wbif.sjx.MIA.Process.CommaSeparatedStringInterpreter;
+import wbif.sjx.VideoHandler.VideoLoader.ScaleModes;
 
 public class VideoLoaderCore {
-    public static ImagePlus getVideo(String path, String frameRange, String channelRange, @Nullable int[] crop)
+    public static ImagePlus getVideo(String path, String frameRange, String channelRange, @Nullable int[] crop,
+            double[] scaleFactors, String scaleMode)
             throws FrameGrabber.Exception, FileNotFoundException, FrameOutOfRangeException {
         String outputName = new File(path).getName();
 
@@ -42,7 +45,8 @@ public class VideoLoaderCore {
             framesList = extendRangeToEnd(framesList, maxFrames);
         if (framesList[framesList.length - 1] > maxFrames) {
             loader.close();
-            throw new FrameOutOfRangeException("Specified frame range ("+framesList[0]+"-"+framesList[framesList.length-1]+") exceeds video length ("+maxFrames+" frames).");
+            throw new FrameOutOfRangeException("Specified frame range (" + framesList[0] + "-"
+                    + framesList[framesList.length - 1] + ") exceeds video length (" + maxFrames + " frames).");
         }
         TreeSet<Integer> frames = Arrays.stream(framesList).boxed().collect(Collectors.toCollection(TreeSet::new));
 
@@ -53,10 +57,8 @@ public class VideoLoaderCore {
 
         int left = 0;
         int top = 0;
-        int origWidth = loader.getImageWidth();
-        int origHeight = loader.getImageHeight();
-        int width = origWidth;
-        int height = origHeight;
+        int width = loader.getImageWidth();
+        int height = loader.getImageHeight();
 
         if (crop != null) {
             left = crop[0];
@@ -65,7 +67,25 @@ public class VideoLoaderCore {
             height = crop[3];
         }
 
-        ImagePlus ipl = IJ.createHyperStack(outputName, width, height, channelsList.length, 1, framesList.length, 8);
+        int widthOut = width;
+        int heightOut = height;
+
+        // Applying scaling
+        switch (scaleMode) {
+        case ScaleModes.NONE:
+            scaleFactors[0] = 1;
+            scaleFactors[1] = 1;
+            break;
+        case ScaleModes.NO_INTERPOLATION:
+        case ScaleModes.BILINEAR:
+        case ScaleModes.BICUBIC:
+            widthOut = (int) Math.round(width * scaleFactors[0]);
+            heightOut = (int) Math.round(height * scaleFactors[1]);
+            break;
+        }
+
+        ImagePlus ipl = IJ.createHyperStack(outputName, widthOut, heightOut, channelsList.length, 1, framesList.length,
+                8);
         int count = 1;
         int total = frames.size();
         IJ.showStatus("Loading video");
@@ -83,6 +103,22 @@ public class VideoLoaderCore {
                 if (crop != null) {
                     ipr.setRoi(left, top, width, height);
                     ipr = ipr.crop();
+                }
+
+                // Applying scaling
+                switch (scaleMode) {
+                case ScaleModes.NO_INTERPOLATION:
+                    ipr.setInterpolationMethod(ImageProcessor.NONE);
+                    ipr = ipr.resize(widthOut, heightOut);
+                    break;
+                case ScaleModes.BILINEAR:
+                    ipr.setInterpolationMethod(ImageProcessor.BILINEAR);
+                    ipr = ipr.resize(widthOut, heightOut);
+                    break;
+                case ScaleModes.BICUBIC:
+                    ipr.setInterpolationMethod(ImageProcessor.BICUBIC);
+                    ipr = ipr.resize(widthOut, heightOut);
+                    break;
                 }
 
                 ipl.setProcessor(ipr);
@@ -115,7 +151,7 @@ public class VideoLoaderCore {
         }
 
         double fps = loader.getFrameRate();
-        setTemporalCalibration(ipl,fps);
+        setTemporalCalibration(ipl, fps);
 
         ipl.setPosition(1);
         ipl.updateChannelAndDraw();
@@ -157,7 +193,7 @@ public class VideoLoaderCore {
         return values.stream().mapToInt(Integer::intValue).toArray();
     }
 
-    public static void setTemporalCalibration(ImagePlus ipl, double fps) {        
+    public static void setTemporalCalibration(ImagePlus ipl, double fps) {
         Unit<Time> temporalUnits = TemporalUnit.getOMEUnit();
 
         Calibration cal = ipl.getCalibration();
