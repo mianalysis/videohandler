@@ -2,11 +2,11 @@
 
 About VideoHandler
 ------------------
-VideoHandler is an [Fiji](https://fiji.sc) plugin, which uses [JavaCV](https://github.com/bytedeco/javacv) to provide video loading functionality.  Videos can be loaded both directly to Fiji or into a MIA workflow if the [MIA (Modular Image Analysis)](https://github.com/sjcross/MIA) workflow automation plugin is also installed.
+VideoHandler is an [Fiji](https://fiji.sc) plugin, which uses [JavaCV](https://github.com/bytedeco/javacv) to provide video loading functionality.  Videos can be loaded both directly to Fiji or into a MIA workflow if the [MIA (Modular Image Analysis)](https://github.com/mianalysis/MIA) workflow automation plugin is also installed.
 
 Installation
 ------------
-1. Download the latest version of the plugin from the [Releases](https://github.com/sjcross/VideoHandler/releases) page.  VideoHandler is platform-specific, so please only download the .jar file corresponding to your system (e.g. for a 64-bit Windows computer, use the "win64" version)
+1. Download the latest version of the plugin from the [Releases](https://github.com/mianalysis/VideoHandler/releases) page.  VideoHandler is platform-specific, so please only download the .jar file corresponding to your system (e.g. for a 64-bit Windows computer, use the "win64" version)
 2. Place this .jar file into the /plugins directory of the your Fiji installation
 
 Usage
@@ -28,8 +28,8 @@ To load videos into MIA:
 
 Acknowledgements
 ----------------
-This plugin relies on the [JavaCV](https://github.com/bytedeco/javacv) library, which comes bundled with each platform-specific [release](https://github.com/sjcross/VideoHandler/releases).
+This plugin relies on the [JavaCV](https://github.com/bytedeco/javacv) library, which comes bundled with each platform-specific [release](https://github.com/mianalysis/VideoHandler/releases).
 
 Note
 ----
-This plugin is still in development and test coverage is currently incomplete.  Please keep an eye on results and add an [issue](https://github.com/SJCross/VideoHandler/issues) if any problems are encountered.
+This plugin is still in development and test coverage is currently incomplete.  Please keep an eye on results and add an [issue](https://github.com/mianalysis/VideoHandler/issues) if any problems are encountered.
