@@ -20,8 +20,8 @@ public class Video_Loader implements PlugIn {
         GenericDialog genericDialog = new GenericDialog("SVG dimensions");
         genericDialog.addStringField("Frame range","1-end");
         genericDialog.addStringField("Channel range","1-end");
-        genericDialog.addNumericField("X-axis scaling", 1.0);
-        genericDialog.addNumericField("Y-axis scaling", 1.0);
+        genericDialog.addNumericField("X-axis scaling", 1.0, 4);
+        genericDialog.addNumericField("Y-axis scaling", 1.0, 4);
         genericDialog.showDialog();
 
         if (genericDialog.wasCanceled()) return;

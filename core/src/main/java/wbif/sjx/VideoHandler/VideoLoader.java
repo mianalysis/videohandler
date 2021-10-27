@@ -37,7 +37,8 @@ import wbif.sjx.MIA.Object.References.Collections.ObjMeasurementRefCollection;
 import wbif.sjx.MIA.Object.References.Collections.ParentChildRefCollection;
 import wbif.sjx.MIA.Object.References.Collections.PartnerRefCollection;
 import wbif.sjx.MIA.Object.Units.SpatialUnit;
-import wbif.sjx.common.Object.Metadata;
+import wbif.sjx.common.MetadataExtractors.Metadata;
+
 
 public class VideoLoader extends Module {
     public static final String LOADER_SEPARATOR = "Core video loading controls";

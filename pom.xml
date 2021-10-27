@@ -5,7 +5,7 @@
     <groupId>wbif.sjx</groupId>
     <artifactId>VideoHandler</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.9</version>
+    <version>1.0.10</version>
     <name>VideoHandler</name>
     <url>https://github.com/SJCross/VideoHandler</url>
     <inceptionYear>2019</inceptionYear>

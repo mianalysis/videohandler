@@ -4,7 +4,7 @@
     <parent>
         <artifactId>VideoHandler</artifactId>
         <groupId>wbif.sjx</groupId>
-        <version>1.0.9</version>
+        <version>1.0.10</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -46,7 +46,7 @@
         </dependency>
 
         <!-- The following two dependencies are for debugging only (remove when packaging)-->
-        <!-- <dependency>
+        <dependency>
             <groupId>org.bytedeco.javacpp-presets</groupId>
             <artifactId>opencv</artifactId>
             <version>4.0.1-1.4.4</version>
@@ -58,15 +58,15 @@
             <artifactId>ffmpeg</artifactId>
             <version>4.1-1.4.4</version>
             <classifier>windows-x86_64</classifier>
-        </dependency> -->
+        </dependency>
 
         <dependency>
             <!-- <groupId>wbif.sjx</groupId>
             <artifactId>MIA_</artifactId>
             <version>0.18.0</version> -->
-            <groupId>com.github.SJCross</groupId>
-            <artifactId>ModularImageAnalysis</artifactId>
-            <version>0.18.0</version>
+            <groupId>com.github.mianalysis</groupId>
+            <artifactId>mia</artifactId>
+            <version>v0.18.15</version>
             <scope>${scp}</scope>
         </dependency>
     </dependencies>
