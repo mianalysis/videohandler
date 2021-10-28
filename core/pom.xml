@@ -3,8 +3,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>VideoHandler</artifactId>
-        <groupId>wbif.sjx</groupId>
-        <version>1.0.10</version>
+        <groupId>io.github.mianalysis</groupId>
+        <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -61,12 +61,12 @@
         </dependency>
 
         <dependency>
-            <!-- <groupId>wbif.sjx</groupId>
+            <!-- <groupId>io.github.mianalysis</groupId>
             <artifactId>MIA_</artifactId>
             <version>0.18.0</version> -->
             <groupId>com.github.mianalysis</groupId>
             <artifactId>mia</artifactId>
-            <version>v0.18.15</version>
+            <version>v0.20.0</version>
             <scope>${scp}</scope>
         </dependency>
     </dependencies>
@@ -101,7 +101,7 @@
         <!--                        <manifest>-->
         <!--                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
         <!--                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>-->
-        <!--                            <mainClass>wbif.sjx.VideoHandler.VideoLoader</mainClass>-->
+        <!--                            <mainClass>io.github.mianalysis.videohandler.VideoLoader</mainClass>-->
         <!--                        </manifest>-->
         <!--                    </archive>-->
         <!--                </configuration>-->

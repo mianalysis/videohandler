@@ -1,11 +1,11 @@
-package wbif.sjx.VideoHandler;
+package io.github.mianalysis.videohandler;
 
 import java.io.File;
 
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
-import wbif.sjx.VideoHandler.VideoLoader.ScaleModes;
+import io.github.mianalysis.videohandler.VideoLoader.ScaleModes;
 
 public class Video_Loader implements PlugIn {
     @Override
