@@ -1,4 +1,4 @@
-package wbif.sjx.VideoHandler;
+package io.github.mianalysis.videohandler;
 
 import java.io.IOException;
 
@@ -6,38 +6,39 @@ import org.apache.commons.io.FilenameUtils;
 
 import ij.ImagePlus;
 import ij.measure.Calibration;
+import io.github.mianalysis.mia.MIA;
+import io.github.mianalysis.mia.module.Categories;
+import io.github.mianalysis.mia.module.Category;
+import io.github.mianalysis.mia.module.Module;
+import io.github.mianalysis.mia.module.Modules;
+import io.github.mianalysis.mia.module.inputoutput.ImageLoader;
+import io.github.mianalysis.mia.object.Image;
+import io.github.mianalysis.mia.object.Objs;
+import io.github.mianalysis.mia.object.Status;
+import io.github.mianalysis.mia.object.Workspace;
+import io.github.mianalysis.mia.object.parameters.BooleanP;
+import io.github.mianalysis.mia.object.parameters.ChoiceP;
+import io.github.mianalysis.mia.object.parameters.FilePathP;
+import io.github.mianalysis.mia.object.parameters.InputImageP;
+import io.github.mianalysis.mia.object.parameters.InputObjectsP;
+import io.github.mianalysis.mia.object.parameters.OutputImageP;
+import io.github.mianalysis.mia.object.parameters.Parameters;
+import io.github.mianalysis.mia.object.parameters.SeparatorP;
+import io.github.mianalysis.mia.object.parameters.text.DoubleP;
+import io.github.mianalysis.mia.object.parameters.text.IntegerP;
+import io.github.mianalysis.mia.object.parameters.text.StringP;
+import io.github.mianalysis.mia.object.parameters.text.TextAreaP;
+import io.github.mianalysis.mia.object.refs.collections.ImageMeasurementRefs;
+import io.github.mianalysis.mia.object.refs.collections.MetadataRefs;
+import io.github.mianalysis.mia.object.refs.collections.ObjMeasurementRefs;
+import io.github.mianalysis.mia.object.refs.collections.ParentChildRefs;
+import io.github.mianalysis.mia.object.refs.collections.PartnerRefs;
+import io.github.mianalysis.mia.object.units.SpatialUnit;
+import io.github.sjcross.common.metadataextractors.Metadata;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.formats.FormatException;
-import wbif.sjx.MIA.MIA;
-import wbif.sjx.MIA.Module.Categories;
-import wbif.sjx.MIA.Module.Category;
-import wbif.sjx.MIA.Module.Module;
-import wbif.sjx.MIA.Module.ModuleCollection;
-import wbif.sjx.MIA.Module.InputOutput.ImageLoader;
-import wbif.sjx.MIA.Object.Image;
-import wbif.sjx.MIA.Object.ObjCollection;
-import wbif.sjx.MIA.Object.Status;
-import wbif.sjx.MIA.Object.Workspace;
-import wbif.sjx.MIA.Object.Parameters.BooleanP;
-import wbif.sjx.MIA.Object.Parameters.ChoiceP;
-import wbif.sjx.MIA.Object.Parameters.FilePathP;
-import wbif.sjx.MIA.Object.Parameters.InputImageP;
-import wbif.sjx.MIA.Object.Parameters.InputObjectsP;
-import wbif.sjx.MIA.Object.Parameters.OutputImageP;
-import wbif.sjx.MIA.Object.Parameters.ParameterCollection;
-import wbif.sjx.MIA.Object.Parameters.SeparatorP;
-import wbif.sjx.MIA.Object.Parameters.Text.DoubleP;
-import wbif.sjx.MIA.Object.Parameters.Text.IntegerP;
-import wbif.sjx.MIA.Object.Parameters.Text.StringP;
-import wbif.sjx.MIA.Object.Parameters.Text.TextAreaP;
-import wbif.sjx.MIA.Object.References.Collections.ImageMeasurementRefCollection;
-import wbif.sjx.MIA.Object.References.Collections.MetadataRefCollection;
-import wbif.sjx.MIA.Object.References.Collections.ObjMeasurementRefCollection;
-import wbif.sjx.MIA.Object.References.Collections.ParentChildRefCollection;
-import wbif.sjx.MIA.Object.References.Collections.PartnerRefCollection;
-import wbif.sjx.MIA.Object.Units.SpatialUnit;
-import wbif.sjx.common.MetadataExtractors.Metadata;
+
 
 
 public class VideoLoader extends Module {
@@ -78,7 +79,7 @@ public class VideoLoader extends Module {
 
     }
 
-    public VideoLoader(ModuleCollection modules) {
+    public VideoLoader(Modules modules) {
         super("Load video", modules);
     }
 
@@ -213,7 +214,7 @@ public class VideoLoader extends Module {
             crop = ImageLoader.getCropROI(referenceImage);
             break;
         case CropModes.OBJECT_COLLECTION_LIMITS:
-            ObjCollection objectsForLimits = workspace.getObjectSet(objectsForLimitsName);
+            Objs objectsForLimits = workspace.getObjectSet(objectsForLimitsName);
             int[][] limits = objectsForLimits.getSpatialExtents();
             crop = new int[] {limits[0][0], limits[1][0], limits[0][1]-limits[0][0], limits[1][1]-limits[1][0]};
             break;
@@ -345,8 +346,8 @@ public class VideoLoader extends Module {
     }
 
     @Override
-    public ParameterCollection updateAndGetParameters() {
-        ParameterCollection returnedParameters = new ParameterCollection();
+    public Parameters updateAndGetParameters() {
+        Parameters returnedParameters = new Parameters();
 
         returnedParameters.add(parameters.getParameter(LOADER_SEPARATOR));
         returnedParameters.add(parameters.getParameter(OUTPUT_IMAGE));
@@ -363,7 +364,7 @@ public class VideoLoader extends Module {
             case NameFormats.GENERIC:
                 returnedParameters.add(parameters.getParameter(GENERIC_FORMAT));
                 returnedParameters.add(parameters.getParameter(AVAILABLE_METADATA_FIELDS));
-                MetadataRefCollection metadataRefs = modules.getMetadataRefs(this);
+                MetadataRefs metadataRefs = modules.getMetadataRefs(this);
                 parameters.getParameter(AVAILABLE_METADATA_FIELDS).setValue(metadataRefs.getMetadataValues());
                 break;
             case NameFormats.INPUT_FILE_PREFIX:
@@ -426,8 +427,8 @@ public class VideoLoader extends Module {
     }
 
     @Override
-    public ImageMeasurementRefCollection updateAndGetImageMeasurementRefs() {
-        ImageMeasurementRefCollection returnedRefs = new ImageMeasurementRefCollection();
+    public ImageMeasurementRefs updateAndGetImageMeasurementRefs() {
+        ImageMeasurementRefs returnedRefs = new ImageMeasurementRefs();
         String outputImageName = parameters.getValue(OUTPUT_IMAGE);
 
         switch ((String) parameters.getValue(CROP_MODE)) {
@@ -444,12 +445,12 @@ public class VideoLoader extends Module {
     }
 
     @Override
-    public ObjMeasurementRefCollection updateAndGetObjectMeasurementRefs() {
+    public ObjMeasurementRefs updateAndGetObjectMeasurementRefs() {
         return null;
     }
 
     @Override
-    public MetadataRefCollection updateAndGetMetadataReferences() {
+    public MetadataRefs updateAndGetMetadataReferences() {
         return null;
     }
 
@@ -459,12 +460,12 @@ public class VideoLoader extends Module {
     }
 
     @Override
-    public ParentChildRefCollection updateAndGetParentChildRefs() {
+    public ParentChildRefs updateAndGetParentChildRefs() {
         return null;
     }
 
     @Override
-    public PartnerRefCollection updateAndGetPartnerRefs() {
+    public PartnerRefs updateAndGetPartnerRefs() {
         return null;
     }
 }

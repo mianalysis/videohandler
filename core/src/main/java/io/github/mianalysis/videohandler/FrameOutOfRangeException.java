@@ -1,4 +1,4 @@
-package wbif.sjx.VideoHandler;
+package io.github.mianalysis.videohandler;
 
 public class FrameOutOfRangeException extends RuntimeException {
     

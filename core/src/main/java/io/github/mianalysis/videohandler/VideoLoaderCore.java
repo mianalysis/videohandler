@@ -1,4 +1,4 @@
-package wbif.sjx.VideoHandler;
+package io.github.mianalysis.videohandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,13 +19,12 @@ import ij.measure.Calibration;
 import ij.plugin.ChannelSplitter;
 import ij.plugin.HyperStackConverter;
 import ij.process.ImageProcessor;
+import io.github.mianalysis.mia.object.units.TemporalUnit;
+import io.github.mianalysis.mia.process.CommaSeparatedStringInterpreter;
+import io.github.mianalysis.videohandler.VideoLoader.ScaleModes;
 import ome.units.UNITS;
 import ome.units.quantity.Time;
 import ome.units.unit.Unit;
-import wbif.sjx.MIA.MIA;
-import wbif.sjx.MIA.Object.Units.TemporalUnit;
-import wbif.sjx.MIA.Process.CommaSeparatedStringInterpreter;
-import wbif.sjx.VideoHandler.VideoLoader.ScaleModes;
 
 public class VideoLoaderCore {
     public static ImagePlus getVideo(String path, String frameRange, String channelRange, @Nullable int[] crop,
