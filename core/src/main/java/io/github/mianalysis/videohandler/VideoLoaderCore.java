@@ -20,7 +20,6 @@ import ij.plugin.ChannelSplitter;
 import ij.plugin.HyperStackConverter;
 import ij.process.ImageProcessor;
 import io.github.mianalysis.mia.object.units.TemporalUnit;
-import io.github.mianalysis.mia.process.CommaSeparatedStringInterpreter;
 import io.github.mianalysis.videohandler.VideoLoader.ScaleModes;
 import ome.units.UNITS;
 import ome.units.quantity.Time;
@@ -38,10 +37,8 @@ public class VideoLoaderCore {
         loader.start();
 
         // Getting an ordered list of frames to be imported
-        int[] framesList = CommaSeparatedStringInterpreter.interpretIntegers(frameRange, true);
+        int[] framesList = CommaSeparatedStringInterpreter.interpretIntegers(frameRange, true,loader.getLengthInFrames());
         int maxFrames = loader.getLengthInFrames();
-        if (framesList[framesList.length - 1] == Integer.MAX_VALUE)
-            framesList = extendRangeToEnd(framesList, maxFrames);
         if (framesList[framesList.length - 1] > maxFrames) {
             loader.close();
             throw new FrameOutOfRangeException("Specified frame range (" + framesList[0] + "-"
@@ -49,9 +46,7 @@ public class VideoLoaderCore {
         }
         TreeSet<Integer> frames = Arrays.stream(framesList).boxed().collect(Collectors.toCollection(TreeSet::new));
 
-        int[] channelsList = CommaSeparatedStringInterpreter.interpretIntegers(channelRange, true);
-        if (channelsList[channelsList.length - 1] == Integer.MAX_VALUE)
-            channelsList = extendRangeToEnd(channelsList, loader.getPixelFormat());
+        int[] channelsList = CommaSeparatedStringInterpreter.interpretIntegers(channelRange, true,loader.getPixelFormat());
         TreeSet<Integer> channels = Arrays.stream(channelsList).boxed().collect(Collectors.toCollection(TreeSet::new));
 
         int left = 0;

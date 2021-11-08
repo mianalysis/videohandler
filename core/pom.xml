@@ -4,7 +4,7 @@
     <parent>
         <artifactId>VideoHandler</artifactId>
         <groupId>io.github.mianalysis</groupId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -61,51 +61,11 @@
         </dependency> -->
 
         <dependency>
-            <!-- <groupId>io.github.mianalysis</groupId>
-            <artifactId>MIA_</artifactId>
-            <version>0.18.0</version> -->
-            <groupId>com.github.mianalysis</groupId>
+            <groupId>io.github.mianalysis</groupId>
             <artifactId>mia</artifactId>
-            <version>v0.20.0</version>
+            <version>0.21.0</version>
             <scope>${scp}</scope>
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
-                <configuration>
-                  <source>1.8</source>
-                  <target>1.8</target>
-                  <!-- Disable annotation processing for ourselves. -->
-                  <compilerArgument>-proc:none</compilerArgument>
-                </configuration>
-              </plugin>        
-        </plugins>
-
-        <!--        <plugins>-->
-        <!--            <plugin>-->
-        <!--                <groupId>org.apache.maven.plugins</groupId>-->
-        <!--                <artifactId>maven-jar-plugin</artifactId>-->
-        <!--                <version>2.6</version>-->
-        <!--                <configuration>-->
-        <!--                    <archive>-->
-        <!--                        <manifest>-->
-        <!--                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
-        <!--                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>-->
-        <!--                            <mainClass>io.github.mianalysis.videohandler.VideoLoader</mainClass>-->
-        <!--                        </manifest>-->
-        <!--                    </archive>-->
-        <!--                </configuration>-->
-        <!--            </plugin>-->
-        <!--        </plugins>-->
-    </build>
 </project>

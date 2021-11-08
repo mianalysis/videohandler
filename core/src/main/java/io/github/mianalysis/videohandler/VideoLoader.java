@@ -3,6 +3,8 @@ package io.github.mianalysis.videohandler;
 import java.io.IOException;
 
 import org.apache.commons.io.FilenameUtils;
+import org.scijava.Priority;
+import org.scijava.plugin.Plugin;
 
 import ij.ImagePlus;
 import ij.measure.Calibration;
@@ -40,7 +42,7 @@ import loci.common.services.ServiceException;
 import loci.formats.FormatException;
 
 
-
+@Plugin(type = Module.class, priority = Priority.LOW, visible = true)
 public class VideoLoader extends Module {
     public static final String LOADER_SEPARATOR = "Core video loading controls";
     public static final String OUTPUT_IMAGE = "Output image";
