@@ -12,10 +12,10 @@ import io.github.mianalysis.mia.module.Category;
 import io.github.mianalysis.mia.module.Module;
 import io.github.mianalysis.mia.module.Modules;
 import io.github.mianalysis.mia.module.inputoutput.ImageLoader;
-import io.github.mianalysis.mia.object.Image;
 import io.github.mianalysis.mia.object.Objs;
-import io.github.mianalysis.mia.object.Status;
 import io.github.mianalysis.mia.object.Workspace;
+import io.github.mianalysis.mia.object.image.Image;
+import io.github.mianalysis.mia.object.image.ImageFactory;
 import io.github.mianalysis.mia.object.parameters.BooleanP;
 import io.github.mianalysis.mia.object.parameters.ChoiceP;
 import io.github.mianalysis.mia.object.parameters.FilePathP;
@@ -33,6 +33,7 @@ import io.github.mianalysis.mia.object.refs.collections.MetadataRefs;
 import io.github.mianalysis.mia.object.refs.collections.ObjMeasurementRefs;
 import io.github.mianalysis.mia.object.refs.collections.ParentChildRefs;
 import io.github.mianalysis.mia.object.refs.collections.PartnerRefs;
+import io.github.mianalysis.mia.object.system.Status;
 import io.github.mianalysis.mia.object.units.SpatialUnit;
 import io.github.sjcross.sjcommon.metadataextractors.Metadata;
 
@@ -169,31 +170,31 @@ public class VideoLoader extends Module {
     @Override
     public Status process(Workspace workspace) {
         // Getting parameters
-        String outputImageName = parameters.getValue(OUTPUT_IMAGE);
-        String importMode = parameters.getValue(IMPORT_MODE);
-        String filePath = parameters.getValue(FILE_PATH);
-        String nameFormat = parameters.getValue(NAME_FORMAT);
+        String outputImageName = parameters.getValue(OUTPUT_IMAGE, workspace);
+        String importMode = parameters.getValue(IMPORT_MODE, workspace);
+        String filePath = parameters.getValue(FILE_PATH, workspace);
+        String nameFormat = parameters.getValue(NAME_FORMAT, workspace);
 
-        String genericFormat = parameters.getValue(GENERIC_FORMAT);
-        String prefix = parameters.getValue(PREFIX);
-        String suffix = parameters.getValue(SUFFIX);
-        String ext = parameters.getValue(EXTENSION);
-        boolean includeSeriesNumber = parameters.getValue(INCLUDE_SERIES_NUMBER);
-        String channelRange = parameters.getValue(CHANNELS);
-        String frameRange = parameters.getValue(FRAMES);
-        String cropMode = parameters.getValue(CROP_MODE);
-        String referenceImageName = parameters.getValue(REFERENCE_IMAGE);
-        int left = parameters.getValue(LEFT);
-        int top = parameters.getValue(TOP);
-        int width = parameters.getValue(WIDTH);
-        int height = parameters.getValue(HEIGHT);
-        String objectsForLimitsName = parameters.getValue(OBJECTS_FOR_LIMITS);
-        String scaleMode = parameters.getValue(SCALE_MODE);
-        double scaleFactorX = parameters.getValue(SCALE_FACTOR_X);
-        double scaleFactorY = parameters.getValue(SCALE_FACTOR_Y);
-        boolean setCalibration = parameters.getValue(SET_CAL);
-        double xyCal = parameters.getValue(XY_CAL);
-        double zCal = parameters.getValue(Z_CAL);
+        String genericFormat = parameters.getValue(GENERIC_FORMAT, workspace);
+        String prefix = parameters.getValue(PREFIX, workspace);
+        String suffix = parameters.getValue(SUFFIX, workspace);
+        String ext = parameters.getValue(EXTENSION, workspace);
+        boolean includeSeriesNumber = parameters.getValue(INCLUDE_SERIES_NUMBER, workspace);
+        String channelRange = parameters.getValue(CHANNELS, workspace);
+        String frameRange = parameters.getValue(FRAMES, workspace);
+        String cropMode = parameters.getValue(CROP_MODE, workspace);
+        String referenceImageName = parameters.getValue(REFERENCE_IMAGE, workspace);
+        int left = parameters.getValue(LEFT, workspace);
+        int top = parameters.getValue(TOP, workspace);
+        int width = parameters.getValue(WIDTH, workspace);
+        int height = parameters.getValue(HEIGHT, workspace);
+        String objectsForLimitsName = parameters.getValue(OBJECTS_FOR_LIMITS, workspace);
+        String scaleMode = parameters.getValue(SCALE_MODE, workspace);
+        double scaleFactorX = parameters.getValue(SCALE_FACTOR_X, workspace);
+        double scaleFactorY = parameters.getValue(SCALE_FACTOR_Y, workspace);
+        boolean setCalibration = parameters.getValue(SET_CAL, workspace);
+        double xyCal = parameters.getValue(XY_CAL, workspace);
+        double zCal = parameters.getValue(Z_CAL, workspace);
 
         int[] crop = null;
         switch (cropMode) {
@@ -257,7 +258,7 @@ public class VideoLoader extends Module {
         try {
             // First first, testing new loader
             ImagePlus outputIpl = VideoLoaderCore.getVideo(pathName, frameRange, channelRange, crop, scaleFactors, scaleMode);
-            outputImage = new Image(outputImageName, outputIpl);
+            outputImage = ImageFactory.createImage(outputImageName, outputIpl);
 
         } catch (FrameOutOfRangeException e1) {
             MIA.log.writeWarning(e1.getMessage());
@@ -345,14 +346,14 @@ public class VideoLoader extends Module {
         returnedParameters.add(parameters.getParameter(OUTPUT_IMAGE));
 
         returnedParameters.add(parameters.getParameter(IMPORT_MODE));
-        switch ((String) parameters.getValue(IMPORT_MODE)) {
+        switch ((String) parameters.getValue(IMPORT_MODE,null)) {
         case ImageLoader.ImportModes.CURRENT_FILE:
         case ImageLoader.ImportModes.IMAGEJ:
             break;
 
         case ImageLoader.ImportModes.MATCHING_FORMAT:
             returnedParameters.add(parameters.getParameter(NAME_FORMAT));
-            switch ((String) parameters.getValue(NAME_FORMAT)) {
+            switch ((String) parameters.getValue(NAME_FORMAT,null)) {
             case NameFormats.GENERIC:
                 returnedParameters.add(parameters.getParameter(GENERIC_FORMAT));
                 returnedParameters.add(parameters.getParameter(AVAILABLE_METADATA_FIELDS));
@@ -382,7 +383,7 @@ public class VideoLoader extends Module {
         returnedParameters.add(parameters.getParameter(FRAMES));
 
         returnedParameters.add(parameters.getParameter(CROP_MODE));
-        switch ((String) parameters.getValue(CROP_MODE)) {
+        switch ((String) parameters.getValue(CROP_MODE,null)) {
         case CropModes.FIXED:
             returnedParameters.add(parameters.getParameter(LEFT));
             returnedParameters.add(parameters.getParameter(TOP));
@@ -398,7 +399,7 @@ public class VideoLoader extends Module {
         }
 
         returnedParameters.add(parameters.getParameter(SCALE_MODE));
-            switch ((String) parameters.getValue(SCALE_MODE)) {
+            switch ((String) parameters.getValue(SCALE_MODE,null)) {
             case ScaleModes.NO_INTERPOLATION:
             case ScaleModes.BILINEAR:
             case ScaleModes.BICUBIC:
@@ -409,7 +410,7 @@ public class VideoLoader extends Module {
 
         returnedParameters.add(parameters.getParameter(CALIBRATION_SEPARATOR));
         returnedParameters.add(parameters.getParameter(SET_CAL));
-        if ((boolean) parameters.getValue(SET_CAL)) {
+        if ((boolean) parameters.getValue(SET_CAL,null)) {
             returnedParameters.add(parameters.getParameter(XY_CAL));
             returnedParameters.add(parameters.getParameter(Z_CAL));
         }
@@ -421,9 +422,9 @@ public class VideoLoader extends Module {
     @Override
     public ImageMeasurementRefs updateAndGetImageMeasurementRefs() {
         ImageMeasurementRefs returnedRefs = new ImageMeasurementRefs();
-        String outputImageName = parameters.getValue(OUTPUT_IMAGE);
+        String outputImageName = parameters.getValue(OUTPUT_IMAGE,null);
 
-        switch ((String) parameters.getValue(CROP_MODE)) {
+        switch ((String) parameters.getValue(CROP_MODE,null)) {
         case CropModes.FROM_REFERENCE:
             returnedRefs.add(imageMeasurementRefs.getOrPut(Measurements.ROI_LEFT).setImageName(outputImageName));
             returnedRefs.add(imageMeasurementRefs.getOrPut(Measurements.ROI_TOP).setImageName(outputImageName));
