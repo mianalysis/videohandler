@@ -4,14 +4,19 @@
     <parent>
         <artifactId>VideoHandler</artifactId>
         <groupId>io.github.mianalysis</groupId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>core</artifactId>
     <packaging>jar</packaging>
-
+    
     <repositories>
+        <repository>
+            <id>scijava.public</id>
+            <url>https://maven.scijava.org/content/groups/public</url>
+        </repository>
+
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -61,9 +66,23 @@
         </dependency> -->
 
         <dependency>
-            <groupId>io.github.mianalysis</groupId>
+            <groupId>net.imagej</groupId>
+            <artifactId>imagej</artifactId>
+            <version>2.2.0</version>
+            <scope>${scp}</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>sc.fiji</groupId>
+            <artifactId>Fiji_Plugins</artifactId>
+            <version>3.1.2</version>
+            <scope>${scp}</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.mianalysis</groupId>
             <artifactId>mia</artifactId>
-            <version>0.21.0</version>
+            <version>1.0.0</version>
             <scope>${scp}</scope>
         </dependency>
     </dependencies>

@@ -6,11 +6,11 @@ import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import com.drew.lang.annotations.Nullable;
-
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
+
+import com.drew.lang.annotations.Nullable;
 
 import fiji.stacks.Hyperstack_rearranger;
 import ij.IJ;

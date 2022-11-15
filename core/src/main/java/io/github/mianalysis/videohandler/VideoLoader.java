@@ -1,7 +1,5 @@
 package io.github.mianalysis.videohandler;
 
-import java.io.IOException;
-
 import org.apache.commons.io.FilenameUtils;
 import org.scijava.Priority;
 import org.scijava.plugin.Plugin;
@@ -36,10 +34,7 @@ import io.github.mianalysis.mia.object.refs.collections.ObjMeasurementRefs;
 import io.github.mianalysis.mia.object.refs.collections.ParentChildRefs;
 import io.github.mianalysis.mia.object.refs.collections.PartnerRefs;
 import io.github.mianalysis.mia.object.units.SpatialUnit;
-import io.github.sjcross.common.metadataextractors.Metadata;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.formats.FormatException;
+import io.github.sjcross.sjcommon.metadataextractors.Metadata;
 
 
 @Plugin(type = Module.class, priority = Priority.LOW, visible = true)
@@ -75,12 +70,7 @@ public class VideoLoader extends Module {
     public static final String XY_CAL = "XY calibration (dist/px)";
     public static final String Z_CAL = "Z calibration (dist/px)";
 
-    public static void main(String[] args) throws Exception {
-        MIA.addPluginPackageName(VideoLoader.class.getCanonicalName());
-        MIA.main(new String[] {});
-
-    }
-
+    
     public VideoLoader(Modules modules) {
         super("Load video", modules);
     }
@@ -138,7 +128,7 @@ public class VideoLoader extends Module {
         try {
             filename = ImageLoader.getGenericName(metadata, genericFormat);
             return path + filename;
-        } catch (ServiceException | DependencyException | FormatException | IOException e) {
+        } catch (Exception e) {
             MIA.log.writeWarning("Can't determine filename format");
             return null;
         }
