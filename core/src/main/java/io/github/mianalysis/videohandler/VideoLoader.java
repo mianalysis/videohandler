@@ -1,5 +1,7 @@
 package io.github.mianalysis.videohandler;
 
+import java.io.File;
+
 import org.apache.commons.io.FilenameUtils;
 import org.scijava.Priority;
 import org.scijava.plugin.Plugin;
@@ -7,6 +9,7 @@ import org.scijava.plugin.Plugin;
 import ij.ImagePlus;
 import ij.measure.Calibration;
 import io.github.mianalysis.mia.MIA;
+import io.github.mianalysis.mia.module.AvailableModules;
 import io.github.mianalysis.mia.module.Categories;
 import io.github.mianalysis.mia.module.Category;
 import io.github.mianalysis.mia.module.Module;
@@ -36,6 +39,9 @@ import io.github.mianalysis.mia.object.refs.collections.ParentChildRefs;
 import io.github.mianalysis.mia.object.refs.collections.PartnerRefs;
 import io.github.mianalysis.mia.object.system.Status;
 import io.github.mianalysis.mia.object.units.SpatialUnit;
+import io.github.mianalysis.mia.process.system.FileTools;
+import net.imagej.ImageJ;
+import net.imagej.patcher.LegacyInjector;
 
 
 @Plugin(type = Module.class, priority = Priority.LOW, visible = true)
@@ -127,7 +133,8 @@ public class VideoLoader extends Module {
         String path = FilenameUtils.getFullPath(absolutePath);
         String filename;
         try {
-            filename = ImageLoader.getGenericName(metadata, genericFormat);
+            
+            filename = FileTools.getGenericName(metadata, genericFormat);
             return path + filename;
         } catch (Exception e) {
             MIA.log.writeWarning("Can't determine filename format");
@@ -212,7 +219,7 @@ public class VideoLoader extends Module {
             crop = ImageLoader.getCropROI(referenceImage);
             break;
         case CropModes.OBJECT_COLLECTION_LIMITS:
-            Objs objectsForLimits = workspace.getObjectSet(objectsForLimitsName);
+            Objs objectsForLimits = workspace.getObjects(objectsForLimitsName);
             int[][] limits = objectsForLimits.getSpatialExtents();
             crop = new int[] {limits[0][0], limits[1][0], limits[0][1]-limits[0][0], limits[1][1]-limits[1][0]};
             break;
@@ -254,6 +261,11 @@ public class VideoLoader extends Module {
         case ImportModes.SPECIFIC_FILE:
             pathName = filePath;
             break;
+        }
+
+        if (!new File(pathName).exists()) {
+            MIA.log.writeWarning("Video file \""+filePath+"\" not found.");
+            return Status.FAIL;
         }
 
         if (pathName == null)

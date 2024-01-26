@@ -5,92 +5,16 @@
     <parent>
         <artifactId>VideoHandler</artifactId>
         <groupId>io.github.mianalysis</groupId>
-        <version>1.5.0</version>
+        <version>1.4.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>win32</artifactId>
+    <artifactId>linux64</artifactId>
     <packaging>jar</packaging>
 
-    <name>VideoHandler</name>
-    <url>https://github.com/mianalysis/videohandler</url>
-    <inceptionYear>2019</inceptionYear>
-    <description>Video reading using JavaCV library</description>
-    <organization>
-        <name>University of Bristol</name>
-    </organization>
-
     <properties>
-        <javacpp.platform.dependencies>windows-x86</javacpp.platform.dependencies>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dependency.locations.selected>false</dependency.locations.selected>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <scp>compile</scp>
-        <genClass>system</genClass>
-        <license.licenseName>GNU General Public License v3+</license.licenseName>
-        <license.copyrightOwners>Stephen Cross</license.copyrightOwners>
+        <javacpp.platform.dependencies>linux-x86_64</javacpp.platform.dependencies>
     </properties>
-
-    <licenses>
-        <license>
-            <name>GNU General Public License v3+</name>
-            <url>http://www.gnu.org/licenses/gpl.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <id>sjcross</id>
-            <name>Stephen Cross</name>
-            <roles>
-                <role>lead</role>
-                <role>developer</role>
-                <role>debugger</role>
-                <role>reviewer</role>
-                <role>support</role>
-                <role>maintainer</role>
-            </roles>
-        </developer>
-    </developers>
-
-    <contributors>
-        <contributor>
-            <name>Stephen Cross</name>
-            <roles>
-                <role>founder</role>
-            </roles>
-            <properties>
-                <id>sjcross</id>
-            </properties>
-        </contributor>
-    </contributors>
-
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/mianalysis/videohandler/issues</url>
-    </issueManagement>
-
-    <mailingLists>
-        <mailingList>
-            <name>Image.sc Forum</name>
-            <archive>https://forum.image.sc/tag/modular-image-analysis</archive>
-        </mailingList>
-    </mailingLists>
-
-    <scm>
-        <connection>scm:git:git://github.com/mianalysis/videohandler</connection>
-        <developerConnection>scm:git:git@github.com:SJCross/VideoHandler</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://github.com/mianalysis/videohandler</url>
-    </scm>
-
-    <ciManagement>
-        <system>Travis</system>
-        <url>https://travis-ci.org/</url>
-    </ciManagement>
 
     <dependencies>
         <dependency>

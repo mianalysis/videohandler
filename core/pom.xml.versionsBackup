@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>VideoHandler</artifactId>
+        <groupId>io.github.mianalysis</groupId>
+        <version>1.4.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>core</artifactId>
+    <packaging>jar</packaging>
+    
+    <repositories>
+        <repository>
+            <id>scijava.public</id>
+            <url>https://maven.scijava.org/content/groups/public</url>
+        </repository>
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>1.4.4</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacpp</artifactId>
+            <version>1.4.4</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.0.1-1.4.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>ffmpeg</artifactId>
+            <version>4.1-1.4.4</version>
+        </dependency>
+
+        <!-- The following two dependencies are for debugging only (remove when packaging)-->
+        <!-- <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.0.1-1.4.4</version>
+            <classifier>windows-x86_64</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>ffmpeg</artifactId>
+            <version>4.1-1.4.4</version>
+            <classifier>windows-x86_64</classifier>
+        </dependency> -->
+
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>imagej</artifactId>
+            <version>2.2.0</version>
+            <scope>${scp}</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>sc.fiji</groupId>
+            <artifactId>Fiji_Plugins</artifactId>
+            <version>3.1.2</version>
+            <scope>${scp}</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.mianalysis</groupId>
+            <artifactId>mia-core</artifactId>
+            <version>1.5.0</version>
+            <scope>${scp}</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.mianalysis</groupId>
+            <artifactId>mia-modules</artifactId>
+            <version>1.5.0</version>
+            <scope>${scp}</scope>
+        </dependency>
+    </dependencies>
+</project>

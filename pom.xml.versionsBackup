@@ -5,7 +5,7 @@
     <groupId>io.github.mianalysis</groupId>
     <artifactId>VideoHandler</artifactId>
     <packaging>pom</packaging>
-    <version>1.5.0</version>
+    <version>1.4.0</version>
     <name>VideoHandler</name>
     <url>https://github.com/mianalysis/videohandler</url>
     <inceptionYear>2019</inceptionYear>
@@ -63,21 +63,14 @@
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/mianalysis/videohandler/issues</url>
+        <url>https://github.com/SJCross/VideoHandler/issues</url>
     </issueManagement>
 
-    <mailingLists>
-        <mailingList>
-            <name>Image.sc Forum</name>
-            <archive>https://forum.image.sc/tag/modular-image-analysis</archive>
-        </mailingList>
-    </mailingLists>
-
     <scm>
-        <connection>scm:git:git://github.com/mianalysis/videohandler</connection>
+        <connection>scm:git:git://github.com/SJCross/VideoHandler</connection>
         <developerConnection>scm:git:git@github.com:SJCross/VideoHandler</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/mianalysis/videohandler</url>
+        <url>https://github.com/SJCross/VideoHandler</url>
     </scm>
 
     <ciManagement>
@@ -93,34 +86,6 @@
         <module>win32</module>
         <module>win64</module>
     </modules>
-
-    <repositories>
-        <repository>
-            <id>scijava.public</id>
-            <url>https://maven.scijava.org/content/groups/public</url>
-        </repository>
-
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>io.github.mianalysis</groupId>
-            <artifactId>mia-plugin</artifactId>
-            <version>1.5.0</version>
-            <scope>${scp}</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>sc.fiji</groupId>
-            <artifactId>Fiji_Plugins</artifactId>
-            <version>3.1.3</version>
-            <scope>${scp}</scope>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
