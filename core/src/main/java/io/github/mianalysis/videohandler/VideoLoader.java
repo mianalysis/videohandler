@@ -9,7 +9,6 @@ import org.scijava.plugin.Plugin;
 import ij.ImagePlus;
 import ij.measure.Calibration;
 import io.github.mianalysis.mia.MIA;
-import io.github.mianalysis.mia.module.AvailableModules;
 import io.github.mianalysis.mia.module.Categories;
 import io.github.mianalysis.mia.module.Category;
 import io.github.mianalysis.mia.module.Module;
@@ -40,8 +39,6 @@ import io.github.mianalysis.mia.object.refs.collections.PartnerRefs;
 import io.github.mianalysis.mia.object.system.Status;
 import io.github.mianalysis.mia.object.units.SpatialUnit;
 import io.github.mianalysis.mia.process.system.FileTools;
-import net.imagej.ImageJ;
-import net.imagej.patcher.LegacyInjector;
 
 
 @Plugin(type = Module.class, priority = Priority.LOW, visible = true)
@@ -171,7 +168,7 @@ public class VideoLoader extends Module {
 
     @Override
     public String getVersionNumber() {
-        return "1.0.0";
+        return "1.0.1";
     }
 
     @Override
