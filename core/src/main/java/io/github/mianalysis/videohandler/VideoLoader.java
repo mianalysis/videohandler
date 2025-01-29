@@ -326,7 +326,7 @@ public class VideoLoader extends Module {
         workspace.addImage(outputImage);
 
         if (showOutput)
-            outputImage.showImage(outputImageName, null, false, true);
+            outputImage.show(outputImageName, null, false, Image.DisplayModes.COMPOSITE);
 
         return Status.PASS;
 

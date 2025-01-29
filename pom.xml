@@ -5,7 +5,7 @@
     <groupId>io.github.mianalysis</groupId>
     <artifactId>VideoHandler</artifactId>
     <packaging>pom</packaging>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
     <name>VideoHandler</name>
     <url>https://github.com/mianalysis/videohandler</url>
     <inceptionYear>2019</inceptionYear>
@@ -110,7 +110,7 @@
         <dependency>
             <groupId>io.github.mianalysis</groupId>
             <artifactId>mia-plugin</artifactId>
-            <version>1.6.0</version>
+            <version>1.7.0</version>
             <scope>${scp}</scope>
         </dependency>
 
